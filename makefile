@@ -44,7 +44,7 @@ VPATH=  . : /home/paolo/DALSA/GigeV/examples/common
 %.o : %.c
 	$(CC) -I. $(INC_PATH) $(C_COMPILE_OPTIONS) $(COMMON_OPTIONS) $(ARCH_OPTIONS) -c $< -o $@
 
-TARGET = modify_me
+TARGET = openeyetrack
 OBJS= $(TARGET).o \
       GevUtils.o \
       convertBayer.o \

@@ -22,7 +22,7 @@ DEBUGFLAGS = -g
 # Conditional definitions for the common demo files
 # (They depend on libraries installed in the system).
 #
-include /home/paolo/DALSA/GigeV/examples/common/commondefs.mk
+include /home/jpcasas/DALSA/GigeV/examples/common/commondefs.mk
 #-fno-for-scope
 CXX_COMPILE_OPTIONS = -c $(DEBUGFLAGS) -DPOSIX_HOSTPC -D_REENTRANT -ffor-scope \
 			-Wall -Wno-parentheses -Wno-missing-braces -Wno-unused-but-set-variable \
@@ -36,10 +36,10 @@ LCLLIBS=  -L$(ARCHLIBDIR) $(COMMONLIBS) -lpthread -lXext -lX11 -L/usr/local/lib 
 
 OPENCV = `pkg-config opencv --cflags --libs`
 
-VPATH=  . : /home/paolo/DALSA/GigeV/examples/common
+VPATH=  . : /home/jpcasas/DALSA/GigeV/examples/common
 
 %.o : %.cpp
-	$(CXX) -I. $(INC_PATH) $(CXX_COMPILE_OPTIONS) $(COMMON_OPTIONS) $(ARCH_OPTIONS) -c $< -o $@
+	$(CXX) -std=c++0x -I. $(INC_PATH) $(CXX_COMPILE_OPTIONS) $(COMMON_OPTIONS) $(ARCH_OPTIONS) -c $< -o $@
 
 %.o : %.c
 	$(CC) -I. $(INC_PATH) $(C_COMPILE_OPTIONS) $(COMMON_OPTIONS) $(ARCH_OPTIONS) -c $< -o $@

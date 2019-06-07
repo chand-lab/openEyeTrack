@@ -58,30 +58,51 @@ void PrintMenu()
 void * ImageDisplayThread( void *context)
 {
 	MY_CONTEXT *displayContext = (MY_CONTEXT *)context;
+	int tracking=0;
+	//createButton("Tracking Disabled/Enabled",NULL,&tracking,CV_CHECKBOX,0);
+	createTrackbar("Tracking Disabled/Enabled",WINDOW_NAME,&tracking,1);
+	int changeParams=0;
 
 	// Setup SimpleBlobDetector parameters.
 	SimpleBlobDetector::Params params;
 
+	int imageThreshold=40;
+
 	// Change thresholds
+	int minThreshold=10;
 	params.minThreshold = 10;
-	params.maxThreshold = 200;
+	int maxThreshold=255;
+	params.maxThreshold = 255;
 
 	// Filter by Area.
 	params.filterByArea = true;
+	int area=100;
 	params.minArea = 100;
 
 	// Filter by Circularity
 	params.filterByCircularity = true;
-	params.minCircularity = 0.6;
+	int minCircularity=60;
+	params.minCircularity = minCircularity/100;
 
 	// Filter by Convexity
 	params.filterByConvexity = false;
-	params.minConvexity = 0.87;
+	int minConvexity=87;
+	params.minConvexity = minConvexity/100;
 
 	// Filter by Inertia
 	params.filterByInertia = true;
-	params.minInertiaRatio = 0.50;
+	int minInertiaRatio=50;
+	params.minInertiaRatio = minInertiaRatio/100;;
 
+	createTrackbar("Min Threshold",WINDOW_NAME,&minThreshold,255);
+	createTrackbar("Max Threshold",WINDOW_NAME,&maxThreshold,255);
+	createTrackbar("Min Area",WINDOW_NAME,&area,300);
+	createTrackbar("Min Circularity",WINDOW_NAME,&minCircularity,100);
+	createTrackbar("Min Convexity",WINDOW_NAME,&minConvexity,100);
+	createTrackbar("Min Intertia Ratio",WINDOW_NAME,&minInertiaRatio,100);
+	createTrackbar("Change Detection Parameters",WINDOW_NAME,&changeParams,1);
+
+	createTrackbar("Image Threshold", WINDOW_NAME, &imageThreshold,255);
 
 	// Storage for blobs
 	vector<KeyPoint> keypoints;
@@ -106,21 +127,39 @@ void * ImageDisplayThread( void *context)
 				{
 					m_latestBuffer = img->address;
 					Mat imgCv=Mat(img->h, img->w, CV_8UC1, m_latestBuffer);
-					Mat imgCv_with_keypoints;
-
-					detector->detect(imgCv,keypoints);
-					drawKeypoints( imgCv, keypoints, imgCv_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-					if(!keypoints.empty()){
-						Point2f xy=keypoints[0].pt;
-						string coordinates="x = " + to_string((int)xy.x) + ", y = " + to_string((int)xy.y);
-						putText(imgCv_with_keypoints,coordinates.c_str(),Point(10,50), FONT_HERSHEY_DUPLEX, .8, Scalar(0,0,255));
-					}
+					Mat thresh;
+					threshold(imgCv,thresh,getTrackbarPos("Image Threshold",WINDOW_NAME),255,THRESH_BINARY_INV);
+					if(tracking){
+						Mat imgCv_with_keypoints;
+						detector->detect(thresh,keypoints);
+						drawKeypoints( thresh, keypoints, imgCv_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
+						if(!keypoints.empty()){
+							Point2f xy=keypoints[0].pt;
+							string coordinates="x = " + to_string((int)xy.x) + ", y = " + to_string((int)xy.y);
+							putText(imgCv_with_keypoints,coordinates.c_str(),Point(10,50), FONT_HERSHEY_DUPLEX, .8, Scalar(0,0,255));
+						} 
 										
 					imshow (displayContext->View,imgCv_with_keypoints);					
 					waitKey(25);
 
+					if(getTrackbarPos("Change Detection Parameters",WINDOW_NAME)==1){
+						params.minThreshold=getTrackbarPos("Min Threshold",WINDOW_NAME);
+						params.maxThreshold=getTrackbarPos("Max Threshold",WINDOW_NAME);
+						params.minArea=getTrackbarPos("Min Area", WINDOW_NAME);
+						params.minCircularity=getTrackbarPos("Min Circularity",WINDOW_NAME)/100;
+						params.minConvexity=getTrackbarPos("Min Convexity",WINDOW_NAME)/100;
+						params.minInertiaRatio=getTrackbarPos("Min Intertia Ratio",WINDOW_NAME)/100;
+						detector=SimpleBlobDetector::create(params);
+						setTrackbarPos("Change Detection Parameters",WINDOW_NAME,0);
+					}
+
+					} else {
+						imshow(displayContext->View,imgCv);
+						waitKey(25);
+					}
+
 					if(getWindowProperty(WINDOW_NAME,1)<0){
-						break;
+						GevStopTransfer(displayContext->camHandle);
 					}
 				}
 				else 

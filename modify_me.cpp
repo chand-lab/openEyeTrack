@@ -10,7 +10,7 @@
 #include "X_Display_utils.h"
 #include "FileUtil.h"
 #include <sched.h>
-#include<vector>
+#include <vector>
 #include <string>
 using namespace cv;
 using namespace std;
@@ -19,25 +19,29 @@ using namespace std;
 #define MAX_CAMERAS_PER_NETIF	32
 #define MAX_CAMERAS		(MAX_NETIF * MAX_CAMERAS_PER_NETIF)
 
+// Enable/disable Bayer to RGB conversion
+// (If disabled - Bayer format will be treated as Monochrome).
+#define ENABLE_BAYER_CONVERSION 1
+
 // Enable/disable buffer FULL/EMPTY handling (cycling)
 #define USE_SYNCHRONOUS_BUFFER_CYCLING	0
 
-#define NUM_BUF	8
 #define WINDOW_NAME "Stream from Camera"
-#define MONITOR_SCALE 1
 
+#define NUM_BUF	8
 void *m_latestBuffer = NULL;
 
 typedef struct tagMY_CONTEXT
 {
-   	const char *        View;
-	GEV_CAMERA_HANDLE 	camHandle;
+	const char * 		View;
+   	//X_VIEW_HANDLE     View;
+	GEV_CAMERA_HANDLE camHandle;
 	int					depth;
-	int 				format;
-	void 				*convertBuffer;
-	BOOL				convertFormat;
-	BOOL              	exit;
-}	MY_CONTEXT, *PMY_CONTEXT;
+	int 					format;
+	void 					*convertBuffer;
+	BOOL					convertFormat;
+	BOOL              exit;
+}MY_CONTEXT, *PMY_CONTEXT;
 
 char GetKey()
 {
@@ -52,46 +56,16 @@ char GetKey()
 void PrintMenu()
 {
    printf("GRAB CTL : [S]=stop,  [G]=continuous, [Q]or[ESC]=end\n");
-
 }
 
 void * ImageDisplayThread( void *context)
 {
 	MY_CONTEXT *displayContext = (MY_CONTEXT *)context;
-
-	// Setup SimpleBlobDetector parameters.
-	SimpleBlobDetector::Params params;
-
-	// Change thresholds
-	params.minThreshold = 10;
-	params.maxThreshold = 200;
-
-	// Filter by Area.
-	params.filterByArea = true;
-	params.minArea = 100;
-
-	// Filter by Circularity
-	params.filterByCircularity = true;
-	params.minCircularity = 0.6;
-
-	// Filter by Convexity
-	params.filterByConvexity = false;
-	params.minConvexity = 0.87;
-
-	// Filter by Inertia
-	params.filterByInertia = true;
-	params.minInertiaRatio = 0.50;
-
-
-	// Storage for blobs
-	vector<KeyPoint> keypoints;
-
-	// Set up detector with params
-	Ptr<SimpleBlobDetector> detector = SimpleBlobDetector::create(params);
+	Mat src = imread("/home/jpcasas/Desktop/download.jpeg");
 
 	if (displayContext != NULL)
 	{
-		// While we are still running.
+   		// While we are still running.
 		while(!displayContext->exit)
 		{
 			GEV_BUFFER_OBJECT *img = NULL;
@@ -105,28 +79,16 @@ void * ImageDisplayThread( void *context)
 				if (img->status == 0)
 				{
 					m_latestBuffer = img->address;
+					//Display_Image( displayContext->View, img->d,  img->w, img->h, img->address );
 					Mat imgCv=Mat(img->h, img->w, CV_8UC1, m_latestBuffer);
-					Mat imgCv_with_keypoints;
-
-					detector->detect(imgCv,keypoints);
-					drawKeypoints( imgCv, keypoints, imgCv_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-					if(!keypoints.empty()){
-						Point2f xy=keypoints[0].pt;
-						string coordinates="x = " + to_string((int)xy.x) + ", y = " + to_string((int)xy.y);
-						putText(imgCv_with_keypoints,coordinates.c_str(),Point(10,50), FONT_HERSHEY_DUPLEX, .8, Scalar(0,0,255));
-					}
-										
-					imshow (displayContext->View,imgCv_with_keypoints);					
-					waitKey(25);
-
-					if(getWindowProperty(WINDOW_NAME,1)<0){
-						break;
-					}
+					imshow (displayContext->View,imgCv);
+					//imshow("Elephant",src);
+					waitKey(10);
 				}
-				else 
+				else
 				{
-					printf("Error Displaying Image");
-					break;
+					// Image had an error (incomplete (timeout/overflow/lost)).
+					// Do any handling of this condition necessary.
 				}
 			}
 #if USE_SYNCHRONOUS_BUFFER_CYCLING
@@ -147,15 +109,18 @@ int main(int argc, char* argv[])
 	GEV_DEVICE_INTERFACE  pCamera[MAX_CAMERAS] = {0};
 	GEV_STATUS status;
 	int numCamera = 0;
+	int camIndex = 0;
+   X_VIEW_HANDLE  View = NULL;
 	MY_CONTEXT context = {0};
-   	pthread_t  tid;
+   pthread_t  tid;
 	char c;
 	int done = FALSE;
 
-	//===================================================================================
-
-	printf("\nEye Tracking Program using Teledyne Dalsa Genie Nano Camera and OpenCV (%s) \n", __DATE__);
-	printf("Based off of Oculomatic code by Jan, put together by Paolo\n ");
+	
+	//============================================================================
+	// Greetings
+	printf ("\nGigE Vision Library GenICam C++ Example Program (%s)\n", __DATE__);
+	printf ("Copyright (c) 2015, DALSA.\nAll rights reserved.\n\n");
 
 	//===================================================================================
 	// Set default options for the library.
@@ -168,155 +133,241 @@ int main(int argc, char* argv[])
 		options.logLevel = GEV_LOG_LEVEL_NORMAL;
 		GevSetLibraryConfigOptions( &options);
 	}
-	
-	status = GevGetCameraList (pCamera, MAX_CAMERAS, &numCamera);
-	if (status){
-		printf("%d camera(s) on the network \n", numCamera);
-	} 
 
-	//====================================================================
-	// Connect to Camera
+	//====================================================================================
+	// DISCOVER Cameras
+	//
+	// Get all the IP addresses of attached network cards.
 
-	int i;
-	UINT32 height = 0;
-	UINT32 width = 0;
-	UINT32 format = 0;
-	UINT32 maxHeight = 1600;
-	UINT32 maxWidth = 2048;
-	UINT32 maxDepth = 2;
-	UINT64 size;
-	UINT64 payload_size;
-	int numBuffers = NUM_BUF;
-	PUINT8 bufAddress[NUM_BUF];
-	GEV_CAMERA_HANDLE handle = NULL;
-			
-	//====================================================================
-	// Open the camera.
-	//printf("here2\n");
-	status = GevOpenCamera(&pCamera[0], GevExclusiveMode, &handle);
+	status = GevGetCameraList( pCamera, MAX_CAMERAS, &numCamera);
 
-	if(status){
-		printf("Failed to open camera\n");
-	} else {
-		printf("\nSuccessfully opened camera\n");
-	}
+	printf ("%d camera(s) on the network\n", numCamera);
 
-	GEV_CAMERA_OPTIONS camOptions = {0};
-	GevGetCameraInterfaceOptions(handle, &camOptions);
-
-	camOptions.heartbeat_timeout_ms = 90000;		// For debugging (delay camera timeout while in debugger)
-	camOptions.streamFrame_timeout_ms = 1001;				// Internal timeout for frame reception.
-	camOptions.streamNumFramesBuffered = 4;				// Buffer frames internally.
-	camOptions.streamMemoryLimitMax = 64*1024*1024;		// Adjust packet memory buffering limit.	
-	camOptions.streamPktSize = 9180;							// Adjust the GVSP packet size.
-	camOptions.streamPktDelay = 10;							// Add usecs between packets to pace arrival at NIC.
-	
-	GevSetCameraInterfaceOptions(handle, &camOptions);
-
-	//=====================================================================
-	// Get the GenICam FeatureNodeMap object and access the camera features.
-	GenApi::CNodeMapRef *Camera = static_cast<GenApi::CNodeMapRef*>(GevGetFeatureNodeMap(handle));
-	
-	if (Camera)
+	// Select the first camera found (unless the command line has a parameter = the camera index)
+	if (numCamera != 0)
 	{
-		// Access some features using the bare GenApi interface methods
-		try 
+		if (argc > 1)
 		{
-			//Mandatory features....
-			GenApi::CIntegerPtr ptrIntNode = Camera->_GetNode("Width");
-			width = (UINT32) ptrIntNode->GetValue();
-			ptrIntNode = Camera->_GetNode("Height");
-			height = (UINT32) ptrIntNode->GetValue();
-			ptrIntNode = Camera->_GetNode("PayloadSize");
-			payload_size = (UINT64) ptrIntNode->GetValue();
-			GenApi::CEnumerationPtr ptrEnumNode = Camera->_GetNode("PixelFormat") ;
-			format = (UINT32)ptrEnumNode->GetIntValue();
+			sscanf(argv[1], "%d", &camIndex);
+			if (camIndex >= (int)numCamera)
+			{
+				printf("Camera index out of range - only %d camera(s) are present\n", numCamera);
+				camIndex = -1;
+			}
 		}
-		// Catch all possible exceptions from a node access.
-		CATCH_GENAPI_ERROR(status);
-	}
 
-	//=================================================================
-		// Set up a grab/transfer from this camera
-		//
-		printf("Camera parameters set for \n\tHeight = %d\n\tWidth = %d\n\tPixelFormat (val) = 0x%08x\n", height,width,format);
-		maxHeight = height;
-		maxWidth = width;
-		maxDepth = GetPixelSizeInBytes(format);
-
-		// Allocate image buffers
-		// (Either the image size or the payload_size, whichever is larger - allows for packed pixel formats).
-		size = maxDepth * maxWidth * maxHeight;
-		size = (payload_size > size) ? payload_size : size;
-		for (i = 0; i < numBuffers; i++)
+		if (camIndex != -1)
 		{
-			bufAddress[i] = (PUINT8)malloc(size);
-			memset(bufAddress[i], 0, size);
-		}
+			//====================================================================
+			// Connect to Camera
+			//
+			//
+			int i;
+			int type;
+			UINT32 height = 0;
+			UINT32 width = 0;
+			UINT32 format = 0;
+			UINT32 maxHeight = 1600;
+			UINT32 maxWidth = 2048;
+			UINT32 maxDepth = 2;
+			UINT64 size;
+			UINT64 payload_size;
+			int numBuffers = NUM_BUF;
+			PUINT8 bufAddress[NUM_BUF];
+			GEV_CAMERA_HANDLE handle = NULL;
+			UINT32 pixFormat = 0;
+			UINT32 pixDepth = 0;
+			UINT32 convertedGevFormat = 0;
+			
+			//====================================================================
+			// Open the camera.
+			status = GevOpenCamera( &pCamera[camIndex], GevExclusiveMode, &handle);			
+			
+			// Go on to adjust some API related settings (for tuning / diagnostics / etc....).
+			if ( status == 0 )
+			{
+				GEV_CAMERA_OPTIONS camOptions = {0};
+
+				// Adjust the camera interface options if desired (see the manual)
+				GevGetCameraInterfaceOptions( handle, &camOptions);
+				//camOptions.heartbeat_timeout_ms = 60000;		// For debugging (delay camera timeout while in debugger)
+				camOptions.heartbeat_timeout_ms = 5000;		// Disconnect detection (5 seconds)
+
+				// Write the adjusted interface options back.
+				GevSetCameraInterfaceOptions( handle, &camOptions);
+
+				//=====================================================================
+				// Get the GenICam FeatureNodeMap object and access the camera features.
+				GenApi::CNodeMapRef *Camera = static_cast<GenApi::CNodeMapRef*>(GevGetFeatureNodeMap(handle));
+				
+				if (Camera)
+				{
+					// Access some features using the bare GenApi interface methods
+					try 
+					{
+						//Mandatory features....
+						GenApi::CIntegerPtr ptrIntNode = Camera->_GetNode("Width");
+						width = (UINT32) ptrIntNode->GetValue();
+						ptrIntNode = Camera->_GetNode("Height");
+						height = (UINT32) ptrIntNode->GetValue();
+						ptrIntNode = Camera->_GetNode("PayloadSize");
+						payload_size = (UINT64) ptrIntNode->GetValue();
+						GenApi::CEnumerationPtr ptrEnumNode = Camera->_GetNode("PixelFormat") ;
+						format = (UINT32)ptrEnumNode->GetIntValue();
+					}
+					// Catch all possible exceptions from a node access.
+					CATCH_GENAPI_ERROR(status);
+				}
+
+				if (status == 0)
+				{
+					//=================================================================
+					// Set up a grab/transfer from this camera
+					//
+					printf("Camera ROI set for \n\tHeight = %d\n\tWidth = %d\n\tPixelFormat (val) = 0x%08x\n", height,width,format);
+
+					maxHeight = height;
+					maxWidth = width;
+					maxDepth = GetPixelSizeInBytes(format);
+
+					// Allocate image buffers
+					// (Either the image size or the payload_size, whichever is larger - allows for packed pixel formats).
+					size = maxDepth * maxWidth * maxHeight;
+					size = (payload_size > size) ? payload_size : size;
+					for (i = 0; i < numBuffers; i++)
+					{
+						bufAddress[i] = (PUINT8)malloc(size);
+						memset(bufAddress[i], 0, size);
+
+					}
 
 #if USE_SYNCHRONOUS_BUFFER_CYCLING
-		// Initialize a transfer with synchronous buffer handling.
-		status = GevInitializeTransfer( handle, SynchronousNextEmpty, size, numBuffers, bufAddress);
+					// Initialize a transfer with synchronous buffer handling.
+					status = GevInitializeTransfer( handle, SynchronousNextEmpty, size, numBuffers, bufAddress);
 #else
-		// Initialize a transfer with asynchronous buffer handling.
-		status = GevInitializeTransfer( handle, Asynchronous, size, numBuffers, bufAddress);
+					// Initialize a transfer with asynchronous buffer handling.
+					status = GevInitializeTransfer( handle, Asynchronous, size, numBuffers, bufAddress);
 #endif
 
-		namedWindow(WINDOW_NAME,WINDOW_AUTOSIZE);
+					// Create an image display window.
+					// This works best for monochrome and RGB. The packed color formats (with Y, U, V, etc..) require 
+					// conversion as do, if desired, Bayer formats.
+					// (Packed pixels are unpacked internally unless passthru mode is enabled).
 
-		// Create a thread to receive images from the API and display them.
-		context.View = WINDOW_NAME;
-		context.camHandle = handle;
-		context.exit = FALSE;
-		pthread_create(&tid, NULL, ImageDisplayThread, &context); 
+					// Translate the raw pixel format to one suitable for the (limited) Linux display routines.			
 
-	    // Call the main command loop or the example.
-	    PrintMenu();
-	    while(!done)
-	    {
-	    	c = GetKey();
+					status = GetX11DisplayablePixelFormat( ENABLE_BAYER_CONVERSION, format, &convertedGevFormat, &pixFormat);
 
-    		// Stop
-            if ((c == 'S') || (c=='s') || (c == '0'))
-            {
-				GevStopTransfer(handle);
-            }
+					if (format != convertedGevFormat) 
+					{
+						// We MAY need to convert the data on the fly to display it.
+						if (GevIsPixelTypeRGB(convertedGevFormat))
+						{
+							// Conversion to RGB888 required.
+							pixDepth = 32;	// Assume 4 8bit components for color display (RGBA)
+							context.format = Convert_SaperaFormat_To_X11( pixFormat);
+							context.depth = pixDepth;
+							context.convertBuffer = malloc((maxWidth * maxHeight * ((pixDepth + 7)/8)));
+							context.convertFormat = TRUE;
+						}
+						else
+						{
+							// Converted format is MONO - generally this is handled
+							// internally (unpacking etc...) unless in passthru mode.
+							// (						
+							pixDepth = GevGetPixelDepthInBits(convertedGevFormat);
+							context.format = Convert_SaperaFormat_To_X11( pixFormat);
+							context.depth = pixDepth;							
+							context.convertBuffer = NULL;
+							context.convertFormat = FALSE;
+						}
+					}
+					else
+					{
+						pixDepth = GevGetPixelDepthInBits(convertedGevFormat);
+						context.format = Convert_SaperaFormat_To_X11( pixFormat);
+						context.depth = pixDepth;
+						context.convertBuffer = NULL;
+						context.convertFormat = FALSE;
+					}
+					//namedWindow(WINDOW_NAME,WINDOW_AUTOSIZE);
+					//View = CreateDisplayWindow("GigE-V GenApi Console Demo", TRUE, height, width, pixDepth, pixFormat, FALSE ); 
 
-            // Continuous grab.
-            if ((c == 'G') || (c=='g'))
-            {
-				for (i = 0; i < numBuffers; i++)
-				{
-					memset(bufAddress[i], 0, size);
+					// Create a thread to receive images from the API and display them.
+					//context.View = View;
+					context.View = WINDOW_NAME;
+					context.camHandle = handle;
+					context.exit = FALSE;
+		   		pthread_create(&tid, NULL, ImageDisplayThread, &context); 
+
+		         // Call the main command loop or the example.
+		         PrintMenu();
+		         while(!done)
+		         {
+		            c = GetKey();
+
+		            // Stop
+		            if ((c == 'S') || (c=='s') || (c == '0'))
+		            {
+							GevStopTransfer(handle);
+		            }
+
+		            // Continuous grab.
+		            if ((c == 'G') || (c=='g'))
+		            {
+							for (i = 0; i < numBuffers; i++)
+							{
+								memset(bufAddress[i], 0, size);
+							}
+	 						status = GevStartTransfer( handle, -1);
+							if (status != 0) printf("Error starting grab - 0x%x  or %d\n", status, status); 
+		            }
+					
+		            
+
+		            if ((c == 0x1b) || (c == 'q') || (c == 'Q'))
+		            {
+							GevStopTransfer(handle);
+		               done = TRUE;
+							context.exit = TRUE;
+		   				pthread_join( tid, NULL);      
+		            }
+		         }
+
+					GevAbortTransfer(handle);
+					status = GevFreeTransfer(handle);
+					DestroyDisplayWindow(View);
+
+
+					for (i = 0; i < numBuffers; i++)
+					{	
+						free(bufAddress[i]);
+					}
+					if (context.convertBuffer != NULL)
+					{
+						free(context.convertBuffer);
+						context.convertBuffer = NULL;
+					}
 				}
-				status = GevStartTransfer( handle, -1);
-				if (status != 0) printf("Error starting grab - 0x%x  or %d\n", status, status); 
-            }
-
-            if ((c == 0x1b) || (c == 'q') || (c == 'Q'))
-            {
-				GevStopTransfer(handle);
-               	done = TRUE;
-				context.exit = TRUE;
-   				pthread_join( tid, NULL);      
-            }
-	    }
-
-	    GevAbortTransfer(handle);
-	    status = GevFreeTransfer(handle);
-	    destroyWindow(WINDOW_NAME);
-
-		for (i = 0; i < numBuffers; i++)
-		{	
-			free(bufAddress[i]);
+				GevCloseCamera(&handle);
+			}
+			else
+			{
+				printf("Error : 0x%0x : opening camera\n", status);
+			}
 		}
-		if (context.convertBuffer != NULL)
-		{
-			free(context.convertBuffer);
-			context.convertBuffer = NULL;
-		}
+	}
 
-		GevCloseCamera(&handle);
-		GevApiUninitialize();
-		_CloseSocketAPI();
+	// Close down the API.
+	GevApiUninitialize();
+
+	// Close socket API
+	_CloseSocketAPI ();	// must close API even on error
+
+
+	//printf("Hit any key to exit\n");
+	//kbhit();
+
+	return 0;
 }
+

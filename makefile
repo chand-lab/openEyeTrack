@@ -26,7 +26,7 @@ include /home/jpcasas/DALSA/GigeV/examples/common/commondefs.mk
 #-fno-for-scope
 CXX_COMPILE_OPTIONS = -c $(DEBUGFLAGS) -DPOSIX_HOSTPC -D_REENTRANT -ffor-scope \
 			-Wall -Wno-parentheses -Wno-missing-braces -Wno-unused-but-set-variable \
-			-Wno-unknown-pragmas -Wno-cast-qual -Wno-unused-function -Wno-unused-label
+			-Wno-unknown-pragmas -Wno-cast-qual -Wno-unused-function -Wno-unused-label -pthread
 
 C_COMPILE_OPTIONS= $(DEBUGFLAGS) -fhosted -Wall -Wno-parentheses -Wno-missing-braces \
 		   	-Wno-unknown-pragmas -Wno-cast-qual -Wno-unused-function -Wno-unused-label -Wno-unused-but-set-variable
@@ -44,7 +44,7 @@ VPATH=  . : /home/jpcasas/DALSA/GigeV/examples/common
 %.o : %.c
 	$(CC) -I. $(INC_PATH) $(C_COMPILE_OPTIONS) $(COMMON_OPTIONS) $(ARCH_OPTIONS) -c $< -o $@
 
-TARGET = openeyetrack
+TARGET = noThread
 OBJS= $(TARGET).o \
       GevUtils.o \
       convertBayer.o \

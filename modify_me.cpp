@@ -1,5 +1,6 @@
 //necessary libraries to include
 #include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,8 +13,10 @@
 #include <sched.h>
 #include <vector>
 #include <string>
-using namespace cv;
+#include <thread>
+
 using namespace std;
+using namespace cv;
 
 #define MAX_NETIF					8
 #define MAX_CAMERAS_PER_NETIF	32
@@ -26,15 +29,16 @@ using namespace std;
 // Enable/disable buffer FULL/EMPTY handling (cycling)
 #define USE_SYNCHRONOUS_BUFFER_CYCLING	0
 
-#define WINDOW_NAME "Stream from Camera"
+// Enable/disable transfer tuning (buffering, timeouts, thread affinity).
+#define TUNE_STREAMING_THREADS 0
 
 #define NUM_BUF	8
 void *m_latestBuffer = NULL;
 
 typedef struct tagMY_CONTEXT
 {
-	const char * 		View;
-   	//X_VIEW_HANDLE     View;
+	const char * View;
+   //X_VIEW_HANDLE     View;
 	GEV_CAMERA_HANDLE camHandle;
 	int					depth;
 	int 					format;
@@ -42,6 +46,76 @@ typedef struct tagMY_CONTEXT
 	BOOL					convertFormat;
 	BOOL              exit;
 }MY_CONTEXT, *PMY_CONTEXT;
+
+static unsigned long us_timer_init( void )
+{
+   struct timeval tm;
+   unsigned long msec;
+   
+   // Get the time and turn it into a millisecond counter.
+   gettimeofday( &tm, NULL);
+   
+   msec = (tm.tv_sec * 1000000) + (tm.tv_usec);
+   return msec;
+}
+static unsigned long ms_timer_init( void )
+{
+   struct timeval tm;
+   unsigned long msec;
+   
+   // Get the time and turn it into a millisecond counter.
+   gettimeofday( &tm, NULL);
+   
+   msec = (tm.tv_sec * 1000) + (tm.tv_usec / 1000);
+   return msec;
+}
+
+static int ms_timer_interval_elapsed( unsigned long origin, unsigned long timeout)
+{
+   struct timeval tm;
+   unsigned long msec;
+   
+   // Get the time and turn it into a millisecond counter.
+   gettimeofday( &tm, NULL);
+   
+   msec = (tm.tv_sec * 1000) + (tm.tv_usec / 1000);
+      
+   // Check if the timeout has expired.
+   if ( msec > origin )
+   {
+      return ((msec - origin) >= timeout) ? TRUE : FALSE;
+   }
+   else
+   {
+      return ((origin - msec) >= timeout) ? TRUE : FALSE;
+   }
+}
+
+static void _GetUniqueFilename( char *filename, size_t size, char *basename)
+{
+	// Create a filename based on the current time (to 0.01 seconds)
+	struct timeval tm;
+	uint32_t years, days, hours, seconds;
+
+	if ((filename != NULL) && (basename != NULL) )
+	{
+		if (size > (16 + sizeof(basename)) )
+		{
+	
+			// Get the time and turn it into a 10 msec resolution counter to use as an index.
+			gettimeofday( &tm, NULL);
+			years = ((tm.tv_sec / 86400) / 365);
+			tm.tv_sec = tm.tv_sec - (years*86400*365);
+			days  = (tm.tv_sec / 86400);
+			tm.tv_sec = tm.tv_sec - (days * 86400);
+			hours = (tm.tv_sec / 3600);
+			seconds = tm.tv_sec - (hours * 3600);						
+															
+			snprintf(filename, size, "%s_%03d%02d%04d%02d", basename, days,hours, (int)seconds, (int)(tm.tv_usec/10000));
+		}
+	}
+}
+
 
 char GetKey()
 {
@@ -55,17 +129,22 @@ char GetKey()
 
 void PrintMenu()
 {
-   printf("GRAB CTL : [S]=stop,  [G]=continuous, [Q]or[ESC]=end\n");
+   printf("GRAB CTL : [S]=stop, [1-9]=snap N, [G]=continuous, [A]=Abort\n");
+   printf("MISC     : [Q]or[ESC]=end,         [T]=Toggle TurboMode (if available), [@]=SaveToFile\n");
 }
 
 void * ImageDisplayThread( void *context)
 {
 	MY_CONTEXT *displayContext = (MY_CONTEXT *)context;
-	Mat src = imread("/home/jpcasas/Desktop/download.jpeg");
 
 	if (displayContext != NULL)
 	{
-   		// While we are still running.
+   	unsigned long prev_time = 0;
+   	//unsigned long cur_time = 0;
+		//unsigned long deltatime = 0;
+		prev_time = us_timer_init();
+
+		// While we are still running.
 		while(!displayContext->exit)
 		{
 			GEV_BUFFER_OBJECT *img = NULL;
@@ -79,11 +158,37 @@ void * ImageDisplayThread( void *context)
 				if (img->status == 0)
 				{
 					m_latestBuffer = img->address;
-					//Display_Image( displayContext->View, img->d,  img->w, img->h, img->address );
-					Mat imgCv=Mat(img->h, img->w, CV_8UC1, m_latestBuffer);
-					imshow (displayContext->View,imgCv);
-					//imshow("Elephant",src);
-					waitKey(10);
+					Mat imgCV=Mat(img->h, img->w, CV_8UC1, m_latestBuffer);
+					imshow("Stream",imgCV);
+					/*
+					// Can the acquired buffer be displayed?
+					if ( IsGevPixelTypeX11Displayable(img->format) || displayContext->convertFormat )
+					{
+						
+						
+						// Convert the image format if required.
+						if (displayContext->convertFormat)
+						{
+							int gev_depth = GevGetPixelDepthInBits(img->format);
+							// Convert the image to a displayable format.
+							//(Note : Not all formats can be displayed properly at this time (planar, YUV*, 10/12 bit packed).
+							ConvertGevImageToX11Format( img->w, img->h, gev_depth, img->format, img->address, \
+													displayContext->depth, displayContext->format, displayContext->convertBuffer);
+					
+							// Display the image in the (supported) converted format. 
+							Display_Image( displayContext->View, displayContext->depth, img->w, img->h, displayContext->convertBuffer );				
+						
+						}
+						else
+						{
+							// Display the image in the (supported) received format. 
+							Display_Image( displayContext->View, img->d,  img->w, img->h, img->address );
+						}
+					}
+					else
+					{
+						//printf("Not displayable\n");
+					}*/
 				}
 				else
 				{
@@ -103,6 +208,42 @@ void * ImageDisplayThread( void *context)
 	pthread_exit(0);	
 }
 
+int IsTurboDriveAvailable(GEV_CAMERA_HANDLE handle)
+{
+	int type;
+	UINT32 val = 0;
+	
+	if ( 0 == GevGetFeatureValue( handle, "transferTurboCurrentlyAbailable",  &type, sizeof(UINT32), &val) )
+	{
+		// Current / Standard method present - this feature indicates if TurboMode is available.
+		// (Yes - it is spelled that odd way on purpose).
+		return (val != 0);
+	}
+	else
+	{
+		// Legacy mode check - standard feature is not there try it manually.
+		char pxlfmt_str[64] = {0};
+
+		// Mandatory feature (always present).
+		GevGetFeatureValueAsString( handle, "PixelFormat", &type, sizeof(pxlfmt_str), pxlfmt_str);
+
+		// Set the "turbo" capability selector for this format.
+		if ( 0 != GevSetFeatureValueAsString( handle, "transferTurboCapabilitySelector", pxlfmt_str) )
+		{
+			// Either the capability selector is not present or the pixel format is not part of the 
+			// capability set.
+			// Either way - TurboMode is NOT AVAILABLE.....
+			return 0; 
+		}
+		else
+		{
+			// The capabilty set exists so TurboMode is AVAILABLE.
+			// It is up to the camera to send TurboMode data if it can - so we let it.
+			return 1;
+		}
+	}
+	return 0;
+}
 
 int main(int argc, char* argv[])
 {
@@ -115,7 +256,38 @@ int main(int argc, char* argv[])
    pthread_t  tid;
 	char c;
 	int done = FALSE;
+	int turboDriveAvailable = 0;
+	char uniqueName[128];
+	uint32_t macLow = 0; // Low 32-bits of the mac address (for file naming).
 
+	// Boost application RT response (not too high since GEV library boosts data receive thread to max allowed)
+	// SCHED_FIFO can cause many unintentional side effects.
+	// SCHED_RR has fewer side effects.
+	// SCHED_OTHER (normal default scheduler) is not too bad afer all.
+	if (0)
+	{
+		//int policy = SCHED_FIFO;
+		int policy = SCHED_RR;
+		pthread_attr_t attrib;
+		int inherit_sched = 0;
+		struct sched_param param = {0};
+
+		// Set an average RT priority (increase/decrease to tuner performance).
+		param.sched_priority = (sched_get_priority_max(policy) - sched_get_priority_min(policy)) / 2;
+		
+		// Set scheduler policy
+		pthread_setschedparam( pthread_self(), policy, &param); // Don't care if it fails since we can't do anyting about it.
+		
+		// Make sure all subsequent threads use the same policy.
+		pthread_attr_init(&attrib);
+		pthread_attr_getinheritsched( &attrib, &inherit_sched);
+		if (inherit_sched != PTHREAD_INHERIT_SCHED)
+		{
+			inherit_sched = PTHREAD_INHERIT_SCHED;
+			pthread_attr_setinheritsched(&attrib, inherit_sched);
+		}
+	}
+	
 	
 	//============================================================================
 	// Greetings
@@ -181,7 +353,29 @@ int main(int argc, char* argv[])
 			
 			//====================================================================
 			// Open the camera.
-			status = GevOpenCamera( &pCamera[camIndex], GevExclusiveMode, &handle);			
+			status = GevOpenCamera( &pCamera[camIndex], GevExclusiveMode, &handle);
+			if (status == 0)
+			{
+				//=================================================================
+				// GenICam feature access via Camera XML File enabled by "open"
+				// 
+				// Get the name of XML file name back (example only - in case you need it somewhere).
+				//
+				char xmlFileName[MAX_PATH] = {0};
+				status = GevGetGenICamXML_FileName( handle, (int)sizeof(xmlFileName), xmlFileName);
+				if (status == GEVLIB_OK)
+				{
+					printf("XML stored as %s\n", xmlFileName);
+				}
+				status = GEVLIB_OK;
+			}
+			// Get the low part of the MAC address (use it as part of a unique file name for saving images).
+			// Generate a unique base name to be used for saving image files
+			// based on the last 3 octets of the MAC address.
+			macLow = pCamera[camIndex].macLow;
+			macLow &= 0x00FFFFFF;
+			snprintf(uniqueName, sizeof(uniqueName), "img_%06x", macLow); 
+			
 			
 			// Go on to adjust some API related settings (for tuning / diagnostics / etc....).
 			if ( status == 0 )
@@ -193,6 +387,24 @@ int main(int argc, char* argv[])
 				//camOptions.heartbeat_timeout_ms = 60000;		// For debugging (delay camera timeout while in debugger)
 				camOptions.heartbeat_timeout_ms = 5000;		// Disconnect detection (5 seconds)
 
+#if TUNE_STREAMING_THREADS
+				// Some tuning can be done here. (see the manual)
+				camOptions.streamFrame_timeout_ms = 1001;				// Internal timeout for frame reception.
+				camOptions.streamNumFramesBuffered = 4;				// Buffer frames internally.
+				camOptions.streamMemoryLimitMax = 64*1024*1024;		// Adjust packet memory buffering limit.	
+				camOptions.streamPktSize = 9180;							// Adjust the GVSP packet size.
+				camOptions.streamPktDelay = 10;							// Add usecs between packets to pace arrival at NIC.
+				
+				// Assign specific CPUs to threads (affinity) - if required for better performance.
+				{
+					int numCpus = _GetNumCpus();
+					if (numCpus > 1)
+					{
+						camOptions.streamThreadAffinity = numCpus-1;
+						camOptions.serverThreadAffinity = numCpus-2;
+					}
+				}
+#endif
 				// Write the adjusted interface options back.
 				GevSetCameraInterfaceOptions( handle, &camOptions);
 
@@ -290,12 +502,11 @@ int main(int argc, char* argv[])
 						context.convertBuffer = NULL;
 						context.convertFormat = FALSE;
 					}
-					//namedWindow(WINDOW_NAME,WINDOW_AUTOSIZE);
-					//View = CreateDisplayWindow("GigE-V GenApi Console Demo", TRUE, height, width, pixDepth, pixFormat, FALSE ); 
+					
+					View = CreateDisplayWindow("GigE-V GenApi Console Demo", TRUE, height, width, pixDepth, pixFormat, FALSE ); 
 
 					// Create a thread to receive images from the API and display them.
-					//context.View = View;
-					context.View = WINDOW_NAME;
+					context.View = "Stream";
 					context.camHandle = handle;
 					context.exit = FALSE;
 		   		pthread_create(&tid, NULL, ImageDisplayThread, &context); 
@@ -306,12 +517,54 @@ int main(int argc, char* argv[])
 		         {
 		            c = GetKey();
 
+		            // Toggle turboMode
+		            if ((c == 'T') || (c=='t'))
+		            {
+							// See if TurboDrive is available.
+							turboDriveAvailable = IsTurboDriveAvailable(handle);
+							if (turboDriveAvailable)
+							{
+								UINT32 val = 1;
+								GevGetFeatureValue(handle, "transferTurboMode", &type, sizeof(UINT32), &val);
+								val = (val == 0) ? 1 : 0;
+								GevSetFeatureValue(handle, "transferTurboMode", sizeof(UINT32), &val);
+								GevGetFeatureValue(handle, "transferTurboMode", &type, sizeof(UINT32), &val);
+								if (val == 1)
+								{
+									printf("TurboMode Enabled\n"); 	
+								}
+								else
+								{
+									printf("TurboMode Disabled\n"); 	
+								}														
+							}
+							else
+							{
+								printf("*** TurboDrive is NOT Available for this device/pixel format combination ***\n");
+							}
+		            }
+
 		            // Stop
 		            if ((c == 'S') || (c=='s') || (c == '0'))
 		            {
 							GevStopTransfer(handle);
 		            }
+		            //Abort
+		            if ((c == 'A') || (c=='a'))
+		            {
+	 						GevAbortTransfer(handle);
+						}
+		            // Snap N (1 to 9 frames)
+		            if ((c >= '1')&&(c<='9'))
+		            {
+							for (i = 0; i < numBuffers; i++)
+							{
+								memset(bufAddress[i], 0, size);
+							}
 
+							status = GevStartTransfer( handle, (UINT32)(c-'0'));
+							if (status != 0) printf("Error starting grab - 0x%x  or %d\n", status, status); 
+						}
 		            // Continuous grab.
 		            if ((c == 'G') || (c=='g'))
 		            {
@@ -323,7 +576,93 @@ int main(int argc, char* argv[])
 							if (status != 0) printf("Error starting grab - 0x%x  or %d\n", status, status); 
 		            }
 					
-		            
+		            // Save image
+		            if ((c == '@'))
+		            {
+							char filename[128] = {0};
+							int ret = -1;
+							uint32_t saveFormat = format;
+							void *bufToSave = m_latestBuffer;
+							int allocate_conversion_buffer = 0;
+							
+							// Make sure we have data to save.
+							if ( m_latestBuffer != NULL )
+							{
+								uint32_t component_count = 1;
+								UINT32 convertedFmt = 0;
+								
+								// Bayer conversion enabled for save image to file option.
+								//
+								// Get the converted pixel type received from the API that is 
+								//	based on the pixel type output from the camera.
+								// (Packed formats are automatically unpacked - unless in "passthru" mode.)
+								//
+								convertedFmt = GevGetConvertedPixelType( 0, format);
+								
+								if ( GevIsPixelTypeBayer( convertedFmt ) && ENABLE_BAYER_CONVERSION )
+								{
+									int img_size = 0;
+									int img_depth = 0;
+									uint8_t fill = 0;
+									
+									// Bayer will be converted to RGB.
+									saveFormat = GevGetBayerAsRGBPixelType(convertedFmt);
+									
+									// Convert the image to RGB.
+									img_depth = GevGetPixelDepthInBits(saveFormat);
+									component_count = GevGetPixelComponentCount(saveFormat);
+									img_size = width * height * component_count* ((img_depth + 7)/8);
+									bufToSave = malloc(img_size);  
+									fill = (component_count == 4) ? 0xFF : 0;  // Alpha if needed.
+									memset( bufToSave, fill, img_size);
+									allocate_conversion_buffer = 1;
+									
+									// Convert the Bayer to RGB	
+									ConvertBayerToRGB( 0, height, width, convertedFmt, m_latestBuffer, saveFormat, bufToSave);
+
+								}
+								else
+								{
+									saveFormat = convertedFmt;
+									allocate_conversion_buffer = 0;
+								}
+								
+								// Generate a file name from the unique base name.
+								_GetUniqueFilename(filename, (sizeof(filename)-5), uniqueName);
+								
+#if defined(LIBTIFF_AVAILABLE)
+								// Add the file extension we want.
+								strncat( filename, ".tif", sizeof(filename));
+								
+								// Write the file (from the latest buffer acquired).
+								ret = Write_GevImage_ToTIFF( filename, width, height, saveFormat, bufToSave);								
+								if (ret > 0)
+								{
+									printf("Image saved as : %s : %d bytes written\n", filename, ret); 
+								}
+								else
+								{
+									printf("Error %d saving image\n", ret);
+								}
+#else
+								printf("*** Library libtiff not installed ***\n");
+#endif
+							}
+							else
+							{
+								printf("No image buffer has been acquired yet !\n");
+							}
+							
+							if (allocate_conversion_buffer)
+							{
+								free(bufToSave);
+							}
+						
+		            }
+		            if (c == '?')
+		            {
+		               PrintMenu();
+		            }
 
 		            if ((c == 0x1b) || (c == 'q') || (c == 'Q'))
 		            {

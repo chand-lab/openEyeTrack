@@ -1,5 +1,6 @@
 //necessary libraries to include
 #include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +13,8 @@
 #include <sched.h>
 #include <vector>
 #include <string>
+#include <thread>
+
 using namespace cv;
 using namespace std;
 
@@ -24,7 +27,7 @@ using namespace std;
 
 #define NUM_BUF	8
 #define WINDOW_NAME "Stream from Camera"
-#define MONITOR_SCALE 1
+#define MONITOR_SCALE 0.5
 
 void *m_latestBuffer = NULL;
 
@@ -37,6 +40,8 @@ typedef struct tagMY_CONTEXT
 	void 				*convertBuffer;
 	BOOL				convertFormat;
 	BOOL              	exit;
+	BOOL 				done;
+
 }	MY_CONTEXT, *PMY_CONTEXT;
 
 char GetKey()
@@ -55,9 +60,20 @@ void PrintMenu()
 
 }
 
+
+
+void *printSomething()
+{
+
+   printf("\nHello");
+
+}
+
 void * ImageDisplayThread( void *context)
 {
 	MY_CONTEXT *displayContext = (MY_CONTEXT *)context;
+
+
 	int tracking=0;
 	//createButton("Tracking Disabled/Enabled",NULL,&tracking,CV_CHECKBOX,0);
 	createTrackbar("Tracking Disabled/Enabled",WINDOW_NAME,&tracking,1);
@@ -70,39 +86,39 @@ void * ImageDisplayThread( void *context)
 
 	// Change thresholds
 	int minThreshold=10;
-	params.minThreshold = 10;
+	params.minThreshold = minThreshold;
 	int maxThreshold=255;
-	params.maxThreshold = 255;
+	params.maxThreshold = maxThreshold;
 
 	// Filter by Area.
 	params.filterByArea = true;
 	int area=100;
-	params.minArea = 100;
+	params.minArea = area;
 
 	// Filter by Circularity
-	params.filterByCircularity = true;
+	params.filterByCircularity = false;
 	int minCircularity=60;
 	params.minCircularity = minCircularity/100;
 
 	// Filter by Convexity
-	params.filterByConvexity = false;
+	params.filterByConvexity = true;
 	int minConvexity=87;
 	params.minConvexity = minConvexity/100;
 
 	// Filter by Inertia
-	params.filterByInertia = true;
+	params.filterByInertia = false;
 	int minInertiaRatio=50;
 	params.minInertiaRatio = minInertiaRatio/100;;
 
 	createTrackbar("Min Threshold",WINDOW_NAME,&minThreshold,255);
 	createTrackbar("Max Threshold",WINDOW_NAME,&maxThreshold,255);
-	createTrackbar("Min Area",WINDOW_NAME,&area,300);
+	createTrackbar("Min Area",WINDOW_NAME,&area,10000);
 	createTrackbar("Min Circularity",WINDOW_NAME,&minCircularity,100);
 	createTrackbar("Min Convexity",WINDOW_NAME,&minConvexity,100);
 	createTrackbar("Min Intertia Ratio",WINDOW_NAME,&minInertiaRatio,100);
 	createTrackbar("Change Detection Parameters",WINDOW_NAME,&changeParams,1);
-
-	createTrackbar("Image Threshold", WINDOW_NAME, &imageThreshold,255);
+	
+	
 
 	// Storage for blobs
 	vector<KeyPoint> keypoints;
@@ -128,10 +144,10 @@ void * ImageDisplayThread( void *context)
 					m_latestBuffer = img->address;
 					Mat imgCv=Mat(img->h, img->w, CV_8UC1, m_latestBuffer);
 					Mat thresh;
-					threshold(imgCv,thresh,getTrackbarPos("Image Threshold",WINDOW_NAME),255,THRESH_BINARY_INV);
+					threshold(imgCv,thresh,getTrackbarPos("Min Threshold",WINDOW_NAME),getTrackbarPos("Max Threshold",WINDOW_NAME),THRESH_BINARY_INV);
 					if(tracking){
 						Mat imgCv_with_keypoints;
-						detector->detect(thresh,keypoints);
+						detector->detect(imgCv,keypoints);
 						drawKeypoints( thresh, keypoints, imgCv_with_keypoints, Scalar(0,0,255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
 						if(!keypoints.empty()){
 							Point2f xy=keypoints[0].pt;
@@ -160,6 +176,9 @@ void * ImageDisplayThread( void *context)
 
 					if(getWindowProperty(WINDOW_NAME,1)<0){
 						GevStopTransfer(displayContext->camHandle);
+						displayContext->exit=TRUE;
+						
+
 					}
 				}
 				else 
@@ -188,6 +207,7 @@ int main(int argc, char* argv[])
 	int numCamera = 0;
 	MY_CONTEXT context = {0};
    	pthread_t  tid;
+   	thread anotherThread(printSomething);
 	char c;
 	int done = FALSE;
 
@@ -293,25 +313,26 @@ int main(int argc, char* argv[])
 			memset(bufAddress[i], 0, size);
 		}
 
-#if USE_SYNCHRONOUS_BUFFER_CYCLING
-		// Initialize a transfer with synchronous buffer handling.
-		status = GevInitializeTransfer( handle, SynchronousNextEmpty, size, numBuffers, bufAddress);
-#else
-		// Initialize a transfer with asynchronous buffer handling.
-		status = GevInitializeTransfer( handle, Asynchronous, size, numBuffers, bufAddress);
-#endif
+		#if USE_SYNCHRONOUS_BUFFER_CYCLING
+			// Initialize a transfer with synchronous buffer handling.
+				status = GevInitializeTransfer( handle, SynchronousNextEmpty, size, numBuffers, bufAddress);
+		#else
+			// Initialize a transfer with asynchronous buffer handling.
+			status = GevInitializeTransfer( handle, Asynchronous, size, numBuffers, bufAddress);
+		#endif
 
 		namedWindow(WINDOW_NAME,WINDOW_AUTOSIZE);
-
+		
 		// Create a thread to receive images from the API and display them.
 		context.View = WINDOW_NAME;
 		context.camHandle = handle;
 		context.exit = FALSE;
+		context.done = FALSE;
 		pthread_create(&tid, NULL, ImageDisplayThread, &context); 
-
+		
 	    // Call the main command loop or the example.
 	    PrintMenu();
-	    while(!done)
+	    while(!done && !context.exit)
 	    {
 	    	c = GetKey();
 
@@ -324,6 +345,8 @@ int main(int argc, char* argv[])
             // Continuous grab.
             if ((c == 'G') || (c=='g'))
             {
+       
+
 				for (i = 0; i < numBuffers; i++)
 				{
 					memset(bufAddress[i], 0, size);
@@ -337,13 +360,15 @@ int main(int argc, char* argv[])
 				GevStopTransfer(handle);
                	done = TRUE;
 				context.exit = TRUE;
-   				pthread_join( tid, NULL);      
+				
+   				pthread_join( tid, NULL);
+   				anotherThread.join();
             }
 	    }
 
 	    GevAbortTransfer(handle);
 	    status = GevFreeTransfer(handle);
-	    destroyWindow(WINDOW_NAME);
+	    
 
 		for (i = 0; i < numBuffers; i++)
 		{	
@@ -357,5 +382,7 @@ int main(int argc, char* argv[])
 
 		GevCloseCamera(&handle);
 		GevApiUninitialize();
+		if (getWindowProperty(WINDOW_NAME, WND_PROP_AUTOSIZE) != -1)
+        	destroyWindow(WINDOW_NAME);
 		_CloseSocketAPI();
 }

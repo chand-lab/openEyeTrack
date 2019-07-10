@@ -404,9 +404,9 @@ void * networkDataThread(void *ptr)
 		}
 	}
 #if DEBUG_STATEMENTS
-	printf("first frameID = %d\n",first);
-	printf("last frameID = %d \n",data.frameID);
-	printf("data sent: %d\n",count);
+	printf("first frameID sent = %d\n",first);
+	printf("last frameID sent = %d \n",data.frameID);
+	printf("total data sent: %d\n",count);
 #endif
 	printf ("network thread done\n");
 	pthread_exit(NULL);

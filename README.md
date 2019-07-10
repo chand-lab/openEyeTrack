@@ -27,7 +27,7 @@
 This needs to be re-run if the system restarts
 
 ### Installing QT5
-- sudo apt-get install build-essential 
+- `sudo apt-get install build-essential`
 - sudo apt-get install qtcreator 
 - sudo apt-get install qt5-default
 

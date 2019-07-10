@@ -37,7 +37,7 @@ using namespace cv;
 using namespace std;
 #define CAMERA_WINDOW "Eye Tracker"
 // define the number of image processing threads to use
-#define NUM_PROC_THREADS 3
+#define NUM_PROC_THREADS 6
 // define the amount of time in micro-seconds to sleep - forces an artifical frame rate on the camera
 #define SLEEP_TIME 1000
 // Enable/disable buffer FULL/EMPTY handling (cycling) - stick with synchronous
@@ -587,6 +587,8 @@ void imageDisplayThread ()
 		imshow(CAMERA_WINDOW,final);
 		int key = waitKey(1);
 
+		final.release();
+
 		//quit by pressing q whem image window is selected
 		if (key == 'q' || key == 'Q') {
 			myCam.done = true;
@@ -603,7 +605,7 @@ void imageDisplayThread ()
 
 int main(int argc, char* argvp[])
 {
-
+	//does this need to be 8*32? TODO
 	GEV_DEVICE_INTERFACE  pCamera[8*32] = {0};
 
 	//greetings

@@ -1,6 +1,7 @@
 CC= gcc
 CXX=g++
 
+#make sure this is the correct path to GigeV
 IROOT=/usr/dalsa/GigeV
 
 #
@@ -25,6 +26,8 @@ OPENCV = $(shell pkg-config opencv4 --cflags --libs)
 #
 
 #this line needs to be changed based on user download location
+#if the GigeV framework is installed as direct in the user guide then only 
+#the second parameter (account name) needs to be changed
 include /home/jpcasas/DALSA/GigeV/examples/common/commondefs.mk
 
 CXX_COMPILE_OPTIONS = -c $(OPENCV) $(DEBUGFLAGS) -DPOSIX_HOSTPC -D_REENTRANT -ffor-scope \

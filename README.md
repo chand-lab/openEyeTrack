@@ -3,7 +3,7 @@
 - Computer: Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz, 64GB
  - Basic IR light source
  - Camera: Genie Nano M640 NIR
- - Netgear Power Over Ethernet
+ - Netgear Power-Over-Ethernet Switch
 
 ## Software Specs
 - Ubuntu 16.04
@@ -27,69 +27,81 @@
 This needs to be re-run if the system restarts
 
 ### Installing QT5
-- `sudo apt-get install build-essential`
-- sudo apt-get install qtcreator 
-- sudo apt-get install qt5-default
+    sudo apt-get install build-essential
+    sudo apt-get install qtcreator
+    sudo apt-get install qt5-default
 
 ### Installing opencv (version 4.1.0)
 https://www.learnopencv.com/install-opencv-3-4-4-on-ubuntu-16-04/
 
-- Navigate to the directory where you want to clone the repository
-- Type:
-  - $sudo apt -y update
-  - $sudo apt -y upgrade
-  - $sudo apt -y remove x264 libx264-dev
+Navigate to the directory where you want to clone the repository
+Type:
 
-- Install dependencies
-  - $sudo apt -y install build-essential checkinstall cmake pkg-config yasm
-  - $sudo apt -y install git gfortran
-  - $sudo apt -y install libjpeg8-dev libjasper-dev libpng12-dev
-  - $sudo apt -y install libtiff5-dev
-  - $sudo apt -y install libtiff-dev
-  - $sudo apt -y install libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev
-  - $sudo apt -y install libxine2-dev libv4l-dev
-- cd /usr/include/linux
-- sudo ln -s -f ../libv4l1-videodev.h videodev.h
-- cd $cwd
-- $ sudo apt -y install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
-- $ sudo apt -y install libgtk2.0-dev libtbb-dev qt5-default
-- $ sudo apt -y install libatlas-base-dev
-- $ sudo apt -y install libfaac-dev libmp3lame-dev libtheora-dev
-- $ sudo apt -y install libvorbis-dev libxvidcore-dev
-- $ sudo apt -y install libopencore-amrnb-dev libopencore-amrwb-dev
-- $ sudo apt -y install libavresample-dev
-- $ sudo apt -y install x264 v4l-utils
-- Optional dependencies
-  - $ sudo apt -y install libprotobuf-dev protobuf-compiler
-  - $ sudo apt -y install libgoogle-glog-dev libgflags-dev
-  - $ sudo apt -y install libgphoto2-dev libeigen3-dev libhdf5-dev doxygen
+    sudo apt -y update
+    sudo apt -y upgrade
+    sudo apt -y remove x264 libx264-dev
 
-- Clone opencv and opencv_contrib
-  - $ git clone https://github.com/opencv/opencv.git
-  - $ cd opencv
-  - $ git checkout 4.1.0
-  - $ cd ..
-  - $ git clone https://github.com/opencv/opencv_contrib.git
-  - $ cd opencv_contrib
-  - $ git checkout 4.1.0
-  - $ cd ..
+Install dependencies
+
+    sudo apt -y install build-essential checkinstall cmake pkg-config yasm
+    sudo apt -y install git gfortran
+    sudo apt -y install libjpeg8-dev libjasper-dev libpng12-dev
+    sudo apt -y install libtiff5-dev
+    sudo apt -y install libtiff-dev
+    sudo apt -y install libavcodec-dev libavformat-dev libswscale-dev libdc1394-22-dev
+    sudo apt -y install libxine2-dev libv4l-dev
+    sudo apt -y install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+    sudo apt -y install libgtk2.0-dev libtbb-dev qt5-default
+    sudo apt -y install libatlas-base-dev
+    sudo apt -y install libfaac-dev libmp3lame-dev libtheora-dev
+    sudo apt -y install libvorbis-dev libxvidcore-dev
+    sudo apt -y install libopencore-amrnb-dev libopencore-amrwb-dev
+    sudo apt -y install libavresample-dev
+    sudo apt -y install x264 v4l-utils
+    
+Optional dependencies
+
+    sudo apt -y install libprotobuf-dev protobuf-compiler
+    sudo apt -y install libgoogle-glog-dev libgflags-dev
+    sudo apt -y install libgphoto2-dev libeigen3-dev libhdf5-dev doxygen
+
+Clone opencv and opencv_contrib
+
+    git clone https://github.com/opencv/opencv.git
+    cd opencv
+    git checkout 4.1.0
+    cd ..
+    git clone https://github.com/opencv/opencv_contrib.git
+    cd opencv_contrib
+    git checkout 4.1.0
+    cd ..
 
  (Need to clone the same version of opencv_contrib)
  
-  - Make a build directory within opencv and start compilation process
-  - $ cd opencv
-  - $ mkdir build
-  - $ cd build
-  - Use: cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local-D WITH_TBB=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules -D BUILD_EXAMPLES=OFF -D OPENCV_GENERATE_PKGCONFIG=ON ..
+ Make a build directory within opencv and start compilation process
+ 
+    cd opencv
+    mkdir build
+    cd build
+    
+ Use:
+ 
+    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local-D WITH_TBB=ON -D WITH_V4L=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules -D BUILD_EXAMPLES=OFF -D OPENCV_GENERATE_PKGCONFIG=ON ..
 
 (For later versions of OpenCV, need to include OPENCV_GENERATE_PKGCONFIG=ON)
 
- - Use  $ sudo make install -j4
+Use:  
+
+    sudo make install -j4
 (having the ‘-j4’ says to use use multiple threads which greatly speeds up this step)
 
-- Then type:
-  - $ sudo sh -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
-  - $ sudo ldconfig
+Then type:
+
+    sudo sh -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
+    sudo ldconfig
+
+
+###this stuff goes into ./folder
 
 ### Usage
 

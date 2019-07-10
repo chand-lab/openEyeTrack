@@ -35,7 +35,7 @@
 
 using namespace cv;
 using namespace std;
-#define CAMERA_WINDOW "Eye Tracker"
+#define CAMERA_WINDOW "openEyeTrack"
 // define the number of image processing threads to use
 #define NUM_PROC_THREADS 6
 // define the amount of time in micro-seconds to sleep - forces an artifical frame rate on the camera

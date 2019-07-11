@@ -19,15 +19,18 @@
 #include <arpa/inet.h> 
 #include <netinet/in.h> 
 
+#include <signal.h>
+
 
 #define CVUI_IMPLEMENTATION
 #include "cvui.h"
 
-#define PI 3.14159
+#define PI 3.1415927
 
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
 #define BLU   "\x1B[34m"
+#define YELLOW "\x1B[33m"
 #define RESET "\x1B[0m"
 
 
@@ -47,7 +50,7 @@ using namespace std;
 //enable/disable print statements for debugging purposes
 #define DEBUG_STATEMENTS 1
 //define the number of buffers to use when capturing images
-#define NUM_BUFF 4
+#define NUM_BUFF 8
 //taken from the calculation of size within main
 #define IMAGE_SIZE 345504
 
@@ -236,13 +239,14 @@ void resetTransfer(PUINT8 *bufAddress, bool stop, bool quit)
 	}
 
 
-#if USE_SYNCHRONOUS_BUFFER_CYCLING
-	// Initialize a transfer with synchronous buffer handling.
-	myCam.status = GevInitializeTransfer( myCam.handle, SynchronousNextEmpty, myCam.image_size, NUM_BUFF, bufAddress);
-#else
-	// Initialize a transfer with asynchronous buffer handling.
-	myCam.status = GevInitializeTransfer( myCam.handle, Asynchronous, myCam.image_size, NUM_BUFF, bufAddress);
-#endif
+	#if USE_SYNCHRONOUS_BUFFER_CYCLING
+		// Initialize a transfer with synchronous buffer handling.
+		myCam.status = GevInitializeTransfer( myCam.handle, SynchronousNextEmpty, myCam.image_size, NUM_BUFF, bufAddress);
+	#else
+		// Initialize a transfer with asynchronous buffer handling.
+		myCam.status = GevInitializeTransfer( myCam.handle, Asynchronous, myCam.image_size, NUM_BUFF, bufAddress);
+	#endif
+	
 	GevStartTransfer(myCam.handle, -1);
 }
 
@@ -326,12 +330,12 @@ void* imageCaptureThread(void *ptr)
 					(status != GEVLIB_OK) ? "no image": "not displayable", status);
 			}
 
-#if DEBUG_STATEMENTS
-		//display information related to the image capture process
-		} else if (count%500 == 0) {
-			printf(RED "capture %d, Q = %lu, %3.2f f/s, %3.2f s, resets = %d \n" RESET, count, myCam.capture_queue.size(), count/duration, duration, reset_count);
-		
-#endif
+		#if DEBUG_STATEMENTS
+				//display information related to the image capture process
+				} else if (count%500 == 0) {
+					printf(YELLOW "capture %d, Q = %lu, %3.2f f/s, %3.2f s, resets = %d \n" RESET, count, myCam.capture_queue.size(), count/duration, duration, reset_count);
+				
+		#endif
 		}
 	}
 
@@ -340,7 +344,7 @@ void* imageCaptureThread(void *ptr)
 	for (int i = 0; i < NUM_BUFF; i++) {		
 		free(myCam.bufAddress[i]);
 	}
-	printf ("capture thread done\n");
+	printf (GRN "capture thread done\n" RESET);
 	pthread_exit(NULL);
 }
 
@@ -366,6 +370,7 @@ void * networkDataThread(void *ptr)
     // Filling server information 
     broadcastAddress.sin_family = AF_INET; 
     broadcastAddress.sin_port = htons(PORT); 
+
     //change this address if need be
     //may experience significant packet loss if recieving end is not within same network
     broadcastAddress.sin_addr.s_addr = inet_addr("255.255.255.255");
@@ -377,7 +382,8 @@ void * networkDataThread(void *ptr)
         printf("setsockopt() failed");
     
     //main loop to continously send out available data
-	while(!myCam.done){
+	while(!myCam.done)
+	{
 		//wait for available data
 		if (!myCam.network_queue.empty()){
 			usleep(2000);
@@ -389,27 +395,29 @@ void * networkDataThread(void *ptr)
 
 			int network_data=sprintf(buffer,"frameID=%d, x= %d, y= %d, area=%d, time=%.4lld us",data.frameID,data.x,data.y,
 				data.area,data.timestamp);
-#if DEBUG_STATEMENTS
-			if (count%500==0){
-				printf( GRN "%s \n" RESET,buffer);
-			}
-			if (count==0)
-			{
-				first=data.frameID;
-				
-			}
-#endif
+		#if DEBUG_STATEMENTS
+					if (count%500==0){
+						printf( GRN "%s \n" RESET,buffer);
+					}
+					if (count==0)
+					{
+						first=data.frameID;
+						
+					}
+		#endif
 			sendto(outputSocket, (const char *) buffer, strlen(buffer),0, (const struct sockaddr *) &broadcastAddress,  sizeof(broadcastAddress)); 
 			count++;
 		}
 	}
-#if DEBUG_STATEMENTS
-	printf("first frameID = %d\n",first);
-	printf("last frameID = %d \n",data.frameID);
-	printf("data sent: %d\n",count);
-#endif
-	printf ("network thread done\n");
-	pthread_exit(NULL);
+
+		#if DEBUG_STATEMENTS
+			printf("first frameID sent = %d\n",first);
+			printf("last frameID sent = %d \n",data.frameID);
+			printf("total data sent: %d\n",count);
+		#endif
+		
+		printf ("network thread done\n");
+		pthread_exit(NULL);
 }
 
 //function for thread(s) to take frames from the captured images queue, run blob detection, and store in memory
@@ -532,7 +540,7 @@ void* imageProcessingThread(void * ptr)
 		myCam.display_queue.push(final);
 		pthread_mutex_unlock(&myCam.display_lock);
 	}
-	printf ("process thread %d done\n", my_idx);
+	printf (GRN "process thread %d done\n" RESET, my_idx);
 	pthread_exit(NULL);
 }
 
@@ -573,12 +581,12 @@ void imageDisplayThread ()
 		
 		duration = (msec() - tstart)/(double)1000.0;
 
-#if DEBUG_STATEMENTS
-		if (displayed % 500 == 0) 
-		{
-			printf(BLU "display %d Q=%lu %3.2f f/s \n" RESET, displayed, myCam.display_queue.size(), (double)displayed/duration);		
-		}	
-#endif
+		#if DEBUG_STATEMENTS
+			if (displayed % 500 == 0) 
+			{
+				printf(BLU "display %d Q=%lu %3.2f f/s \n" RESET, displayed, myCam.display_queue.size(), (double)displayed/duration);		
+			}	
+		#endif
 
 		//print frame rate
 		cvui::printf(final,1000,485, .6, 0x0000FF, "Capture Frame Rate: %3.2f", (double)capturedCount/duration);
@@ -602,6 +610,39 @@ void imageDisplayThread ()
 	printf ("display thread done\n");
 	//not really a thread (called within main) so no need to pthread_exit
 }
+void displayLine()
+{
+	printf(YELLOW "----------------------------------------------------------------------------------------\n" RESET);
+}
+void dispRed(const char *s)
+{
+	printf (RED "%s" RESET, s);
+}
+void dispGRN(const char *s)
+{
+	printf (GRN "%s" RESET, s);
+}
+
+
+void cleanUpandFinishMain(int sig)
+{
+    printf(RED "Finishing Main\n" RESET);
+    myCam.done=true;
+    printf(GRN "Gracefully exiting the program -- Terminating threads and closing camera \n" RESET);
+    displayLine();
+   // exit(-1);
+}
+
+void displayWelcome()
+{
+	displayLine();
+	dispRed("\n openEyeTrack Copyright (C) 2019 Paolo Casas and Chandramouli Chandrasekaran, Boston University.");
+    dispRed("\n This program comes with ABSOLUTELY NO WARRANTY; for details see the License file");
+    dispRed("\n This is free software, and you are welcome to redistribute it under certain conditions (see License). \n" );
+    dispRed(" Based off of Oculomatic code by Jan, rebuilt by Paolo and Chand (Chand Lab)\n");
+    printf(RED "\n Eye Tracking Program using Teledyne Dalsa Genie Nano Camera and OpenCV (%s) \n", __DATE__ RESET);
+    displayLine();
+}
 
 int main(int argc, char* argvp[])
 {
@@ -609,15 +650,14 @@ int main(int argc, char* argvp[])
 	GEV_DEVICE_INTERFACE  pCamera[8*32] = {0};
 
 	//greetings
-	printf("\nEye Tracking Program using Teledyne Dalsa Genie Nano Camera and OpenCV (%s) \n", __DATE__);
-	printf("Based off of Oculomatic code by Jan, put together by Paolo (Chand Lab)\n \n");
+	displayWelcome();
 
 	//============================================================================================
 	
 	//verify if there are available cameras
 	myCam.status = GevGetCameraList (pCamera, 8*32, &myCam.numCamera);
 	if (!myCam.status){
-		printf("%d camera(s) on the network \n", myCam.numCamera);
+		printf(GRN "%d camera(s) on the network \n" RESET, myCam.numCamera );
 	} else {
 		exit(0);
 	}
@@ -630,7 +670,7 @@ int main(int argc, char* argvp[])
 		printf("Failed to open camera\n");
 		exit(0);
 	} else {
-		printf("\nSuccessfully opened camera\n");
+		dispGRN("\nSuccessfully opened camera\n");
 	}
 
 	//============================================================================================
@@ -644,6 +684,8 @@ int main(int argc, char* argvp[])
 	UINT32 maxDepth = 2;
 	UINT64 size;
 	UINT64 payload_size;
+	float frameRate = 0;
+
 	char key;
 	Scalar textColor=Scalar(0,0,255);
 
@@ -665,12 +707,18 @@ int main(int argc, char* argvp[])
 			payload_size = (UINT64) ptrIntNode->GetValue();
 			GenApi::CEnumerationPtr ptrEnumNode = Camera->_GetNode("PixelFormat") ;
 			format = (UINT32)ptrEnumNode->GetIntValue();
+
+			GenApi::CFloatPtr ptrFloatNode = Camera->_GetNode("AcquisitionFrameRate");
+			frameRate = (float)ptrFloatNode->GetValue();
 		}
 		// Catch all possible exceptions from a node access.
 		CATCH_GENAPI_ERROR(myCam.status);
 	}
 
-	printf("Camera parameters set for \n\tHeight = %d\n\tWidth = %d\n\tPixelFormat (val) = 0x%08x\n", height,width,format);
+	
+	printf(GRN "Camera parameters set for \n\tHeight = %d\n\tWidth = %d\n\tPixelFormat (val) = 0x%08x,\n\tFrame Rate: %3.2f fps \n" RESET, 
+		height,width,format, frameRate);
+	displayLine();
 	maxHeight = height;
 	maxWidth = width;
 	maxDepth = GetPixelSizeInBytes(format);
@@ -731,6 +779,10 @@ int main(int argc, char* argvp[])
 	createButton("Quit",quit,&myCam.done,QT_PUSH_BUTTON | QT_NEW_BUTTONBAR,0);
 
 	//============================================================================================
+
+	// If the user presses Ctrl-C to exit the program
+	
+	signal(SIGINT, cleanUpandFinishMain);
 
 	//initialize locks and threads ...
 	pthread_mutex_init(&myCam.capture_lock, NULL);

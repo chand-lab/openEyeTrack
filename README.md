@@ -100,7 +100,8 @@ Then type:
     sudo sh -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
     sudo ldconfig
 
-For detailed usage examples, see usage.md found under the docs folder
+For detailed usage examples, see [usage.md](docs/usage.md) found under the docs folder
+
 
 
 

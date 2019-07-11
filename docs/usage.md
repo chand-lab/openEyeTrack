@@ -7,19 +7,19 @@
   - If there are errors it is likely due to a linking libraries issue
 - Type in: $ ./openEyeTrack
 - If there are no errors so far, your screen should look something like this:
- ![ScreenShot](/docs/README1.png)
+ ![ScreenShot1](/docs/usage1.png)
 
 
 - To bring up the control panel and enable tracking: you can either press Ctrl+P while the display window is selected or navigate to the very right of the toolbar and click on the paintbrush icon
 
-# add 2 images here
-
+![ScreenShot2](/docs/usage2.png)
+![ScreenShot3](/docs/usage3.png)
 
 
 - From here, you can enable/disable the tracking and adjust the various parameters
   - The main filtering parameters will be the thresholding values, the minimum area of the blob, and the gates which specify the region of interest
 
-# add last image here
+![ScreenShot4](/docs/usage4.png)
 
  - To quit the application, either click the “quit” button on the control panel or press the “q” key while the display window is selected
 

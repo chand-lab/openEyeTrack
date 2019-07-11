@@ -7,7 +7,7 @@
   - If there are errors it is likely due to a linking libraries issue
 - Type in: $ ./openEyeTrack
 - If there are no errors so far, your screen should look something like this:
- ![Example 1](doc/README1.png)
+ ![Image](../blob/master/README1.png?raw=true)
 
 
 - To bring up the control panel and enable tracking: you can either press Ctrl+P while the display window is selected or navigate to the very right of the toolbar and click on the paintbrush icon

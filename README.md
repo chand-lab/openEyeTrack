@@ -8,7 +8,7 @@
 ## Software Specs
 - Ubuntu 16.04
 - OpenCV 4.1.0
-- QT5
+- Qt 5.5.1
 - GigE-V Framework for Linux
 
 ## Installation
@@ -26,7 +26,7 @@
 - ***run the gev_nettweak tool (found under GigeV/bin) to enhance performance and prevent resetting the image transfer.***
 This tool needs to be re-run if the system restarts
 
-### Installing QT5
+### Installing Qt 5.5.1
     sudo apt-get install build-essential
     sudo apt-get install qtcreator
     sudo apt-get install qt5-default

@@ -134,8 +134,13 @@ Then type:
 - When tracking is enabled, if there is a lag between movement in real life and the time when it is shown on the display window then it is likely due to the expansion of the capture_queue (this can be seen if DEBUG_STATEMENTS is set to 1). There are two main solutions to fix this problem:
   - One approach is to increase the number of processing threads (defined as NUM_PROC_THREADS near the top of the program). This allows multiple frames to be processed simultaneously which ensures the length of the capture_queue does not increase.
   - The better approach is to adjust the lighting in the environment. Something as simple as adjusting the aperture of the camera may do the trick but in the case of pupil detection, an infrared light source is often required.
-You can also play around with the number of buffers (defined as NUM_BUFF) that the camera initially stores the frames in but 4 seems to be a good number and no noticeable advantages have been found from increasing this amount
+You can also play around with the number of buffers (defined as NUM_BUFF) that the camera initially stores the frames in but 4 seems to be a good number and no noticeable advantages have been found from increasing this value
 
 ### Notes
 - You can set DEBUG_STATEMENTS to 1 (found near the top of the code) in order to display features such as frame rates and queue lengths
 - There is an option to use sychronous vs. asychronous buffer cycling denoted by USE_SYNCHRONOUS_BUFFER_CYCLING, program seems to work beter with sychronous mode so keep value set at 1
+- Occasionally you may run into a “bus error” or “segmentation fault” upon start up but this is easily fixed by spamming Crtl+C and waiting a few seconds until the light on the camera turns blue
+(usually caused by closing and trying to reopen the camera too quickly)
+ - Only the most recent frames are actually shown in the display window as displaying images as a costly process, however all the frames are still being sent out through the UDP socket
+ - When adjusting the gate values for the roi in the control panel, keep in mind that the top left corner of the image is considered (0,0)
+

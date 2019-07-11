@@ -1,8 +1,8 @@
 # openEyeTrack
-## Hardware Specs
+## Tested Hardware Specs
 - Computer: Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz, 64GB
  - Basic IR light source
- - Camera: Genie Nano M640 NIR
+ - Camera: Genie Nano M640 NIR (Teledyne DALSA)
  - Netgear Power-Over-Ethernet Switch
 
 ## Software Specs
@@ -23,8 +23,8 @@
 - Go to the IPv4 settings and change the method to “Link-Local Only” and save changes
 - Make sure the connection is enabled and verify you can connect to camera by typing     $ GigeDeviceStatus from terminal
 - Try running the genicam_cpp_demo found under DALSA/GigeV/examples
-- ***run the gev_nettweak tool (found under GigeV/bin) to enhance performance and prevent resetting the image transfer***
-This needs to be re-run if the system restarts
+- ***run the gev_nettweak tool (found under GigeV/bin) to enhance performance and prevent resetting the image transfer.***
+This tool needs to be re-run if the system restarts
 
 ### Installing QT5
     sudo apt-get install build-essential

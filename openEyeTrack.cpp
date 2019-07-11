@@ -52,7 +52,7 @@ using namespace std;
 //define the number of buffers to use when capturing images
 #define NUM_BUFF 8
 //taken from the calculation of size within main
-#define IMAGE_SIZE 345504
+#define IMAGE_SIZE 346788
 
 
 //structure containing info for images captured by the camera

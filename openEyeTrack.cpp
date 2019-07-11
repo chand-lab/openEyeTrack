@@ -1,3 +1,12 @@
+/*
+openEyeTrack Copyright (C) 2019 Jorge (Paolo) Casas and Chandramouli Chandrasekaran, Boston University.
+ This program comes with ABSOLUTELY NO WARRANTY; for details see the License file
+ This is free software, and you are welcome to redistribute it under certain conditions (see License). 
+ Based off of Oculomatic code by Jan, rebuilt by Paolo and Chand (Chand Lab)
+
+ Eye Tracking Program using Teledyne Dalsa Genie Nano Camera and OpenCV
+ */
+
 
 //necessary libraries to include
 #include "opencv2/opencv.hpp"
@@ -49,7 +58,7 @@ using namespace std;
 //enable/disable print statements for debugging purposes
 #define DEBUG_STATEMENTS 1
 //define the number of buffers to use when capturing images
-#define NUM_BUFF 8
+#define NUM_BUFF 4
 
 //structure containing info for images captured by the camera
 typedef struct
@@ -763,7 +772,6 @@ int main(int argc, char* argvp[])
 	//============================================================================================
 
 	// If the user presses Ctrl-C to exit the program
-	
 	signal(SIGINT, cleanUpandFinishMain);
 
 	//initialize locks and threads ...

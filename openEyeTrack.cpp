@@ -13,7 +13,6 @@
 #include <ctime>
 #include <queue>
 
-
 #include <sys/types.h> 
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
@@ -42,7 +41,7 @@ using namespace std;
 // define the number of image processing threads to use
 #define NUM_PROC_THREADS 6
 // define the amount of time in micro-seconds to sleep - forces an artifical frame rate on the camera
-#define SLEEP_TIME 1000
+#define SLEEP_TIME 500
 // Enable/disable buffer FULL/EMPTY handling (cycling) - stick with synchronous
 #define USE_SYNCHRONOUS_BUFFER_CYCLING	1
 // define UDP port number
@@ -51,16 +50,13 @@ using namespace std;
 #define DEBUG_STATEMENTS 1
 //define the number of buffers to use when capturing images
 #define NUM_BUFF 8
-//taken from the calculation of size within main
-#define IMAGE_SIZE 346788
-
 
 //structure containing info for images captured by the camera
 typedef struct
 {
 	int h;
 	int w;
-	char image[IMAGE_SIZE];
+	char image[1];
 } CAPTURED_IMG;
 
 //structure containing info for images processed through opencv's blob detection
@@ -210,15 +206,6 @@ static unsigned long msec( void )
 	return msec;
 }
 
-//timer in microseconds
-static unsigned long usec( void )
-{
-	struct timeval tm;
-	gettimeofday (&tm, NULL);
-	unsigned long usec = tm.tv_usec;
-	return usec;
-}
-
 //====================================================================================
 
 //function to reset/stop the transfer of frames from the camera
@@ -252,7 +239,6 @@ void resetTransfer(PUINT8 *bufAddress, bool stop, bool quit)
 
 //initialize timers
 unsigned long tstart = msec();
-unsigned long tstart_usec=usec();
 auto start = std::chrono::high_resolution_clock::now();
 
 //thread to store captured frames from camera into memory
@@ -293,10 +279,10 @@ void* imageCaptureThread(void *ptr)
 		if (img != NULL) // Process this image
 		{
 			if (status == GEVLIB_OK && img->status == 0) {
-				CAPTURED_IMG *cimg = (CAPTURED_IMG *) malloc(sizeof (CAPTURED_IMG));
+				CAPTURED_IMG *cimg = (CAPTURED_IMG *) malloc(sizeof (CAPTURED_IMG)+myCam.image_size);
 				cimg->h = img->h;
 				cimg->w = img->w;
-				memcpy (cimg->image , img->address, IMAGE_SIZE);
+				memcpy (cimg->image , img->address, myCam.image_size);
 				pthread_mutex_lock(&myCam.capture_lock);
 				myCam.capture_queue.push(cimg);
 				pthread_mutex_unlock(&myCam.capture_lock);
@@ -550,7 +536,6 @@ void imageDisplayThread ()
 	
 	Mat final;
 	int displayed = 0;
-	unsigned long tstart = msec();
 	double duration = 0;
 
 	while (true) 
@@ -626,17 +611,14 @@ void dispGRN(const char *s)
 
 void cleanUpandFinishMain(int sig)
 {
-    printf(RED "Finishing Main\n" RESET);
     myCam.done=true;
-    printf(GRN "Gracefully exiting the program -- Terminating threads and closing camera \n" RESET);
     displayLine();
-   // exit(-1);
 }
 
 void displayWelcome()
 {
 	displayLine();
-	dispRed("\n openEyeTrack Copyright (C) 2019 Paolo Casas and Chandramouli Chandrasekaran, Boston University.");
+	dispRed("\n openEyeTrack Copyright (C) 2019 Jorge (Paolo) Casas and Chandramouli Chandrasekaran, Boston University.");
     dispRed("\n This program comes with ABSOLUTELY NO WARRANTY; for details see the License file");
     dispRed("\n This is free software, and you are welcome to redistribute it under certain conditions (see License). \n" );
     dispRed(" Based off of Oculomatic code by Jan, rebuilt by Paolo and Chand (Chand Lab)\n");
@@ -647,7 +629,7 @@ void displayWelcome()
 int main(int argc, char* argvp[])
 {
 	//does this need to be 8*32? TODO
-	GEV_DEVICE_INTERFACE  pCamera[8*32] = {0};
+	GEV_DEVICE_INTERFACE  pCamera[1] = {0};
 
 	//greetings
 	displayWelcome();
@@ -801,11 +783,15 @@ int main(int argc, char* argvp[])
 	pthread_create(&thread_network,NULL,networkDataThread,NULL);
 	imageDisplayThread();
 
+
 	//wait for all threads to finish before closing the program
 	pthread_join(thread_capture,NULL);
 	for (int i = 0; i < NUM_PROC_THREADS; i++) {
 		pthread_join(thread_proc[i],NULL);
 	}
+
+	printf(RED "Finishing Main\n" RESET);
+    printf(GRN "Gracefully exiting the program -- Terminating threads and closing camera \n" RESET);
 
 	destroyAllWindows();
 	GevCloseCamera(&myCam.handle);

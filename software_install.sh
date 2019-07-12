@@ -1,9 +1,6 @@
 sudo apt-get update
 sudo apt-get upgrade
 
-#install git
-sudo apt-get install git-core
-
 #install qt5 first
 sudo apt-get install build-essential
 sudo apt-get install qt5-default

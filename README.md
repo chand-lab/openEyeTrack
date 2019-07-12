@@ -13,8 +13,8 @@
 - Git
 
 ## Installation
-    sudo apt-get git-core
 
+ - Install git by typing: $ sudo apt-get install git-core
  - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or clone the repository and the installation script denoted as *software_install* within the repository
    - if you choose to run the installation script you must first convert it to an executable by typing: $ chmod +x software_install.sh
 

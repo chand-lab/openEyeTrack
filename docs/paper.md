@@ -7,11 +7,12 @@ tag:
  - OpenCV
  - Teledyne DALSA
 author:
-- name: Jorge (Paolo) Casas
-  affiliation: Department of Biomedical Engineering, Boston University, 02215
+- Jorge (Paolo) Casas
 - Chandramouli Chandrasekaran
-  affiliation: Department of Anatomy and Neurobiology, Boston University, 02118 
-  affiliation: Department of Psychological and Brain Sciences, Boston University, 02215
+affiliations: 
+- Department of Biomedical Engineering, Boston University, 02215
+- Department of Anatomy and Neurobiology, Boston University, 02118
+- Department of Psychological and Brain Sciences, Boston University, 02215
 date: 11 July 2019
 bibliography: paper.bib
 ---

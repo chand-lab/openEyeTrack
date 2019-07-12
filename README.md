@@ -24,7 +24,7 @@
 ### Installing GigE-V Framework
 - Go to Teledyne dalsa website and download the GigE-V Framework for Linux under support → downloads → SDKs
 - Install all prerequisites listed in User Manual (GNU make can be installed through build-essential and libX11-dev should be libx11-dev)
-- Unzip the .tar file in downloads and then go inside the newly created directory and copy the .tar file that looks like GigE-V-Framework_**x86**_2.02.0.0132.tar.gz to $HOME
+- Unpack the .tar file in downloads and then go inside the newly created directory and copy the .tar file that looks like GigE-V-Framework_**x86**_2.02.0.0132.tar.gz to $HOME
 - Cd into home and unpack tar file (use tar -zxf)
 - Cd into DALSA and type $ ./corinstall
 - Go to connection settings and edit the ethernet connection that is associated with the camera

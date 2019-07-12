@@ -1,7 +1,5 @@
 ### Usage
 
-- Open up terminal and navigate to the directory where you want the repository to be cloned to
-- Clone the repository from git using: $ git clone https://github.com/mailchand/openEyeTrack.git
 - Open up the makefile and check that the paths found on lines 5 and 31 (start with “IROOT” and “include” are correct)
 - Type in: $ make 
   - If there are errors it is likely due to a linking libraries issue

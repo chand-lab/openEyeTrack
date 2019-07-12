@@ -24,15 +24,15 @@ openEyeTrack is based on other open-source eye trackers currently available such
 
 As depicted in **Figure 1** below, as frames transition between the captured, processed, and display processes, they are stored in queues which enable the different processes to run independently  and allow for asynchronous capture, detection, and display. Once the camera grabs a new frame, it is very briefly stored in the Genicam memory buffers before being extracted and packaged by the “capture thread” into a struct and stores in a queue. This approach allows for the sequence of acquisition frames to be preserved and the frame acquisition process to take place without being slowed down by processing or displaying. The frames in the “capture queue” are popped off by the “n” (user specified) processing thread(s). Each processing thread takes the data from the “capture queue,” converts it into an OpenCV Mat object, applies the OpenCV blob detection algorithm, notes the key features, and outputs the position of the blob as text on the frame and  draws a circle around the blob. This process is very time consuming, which is why initializing multiple threads are recommended for higher performance. Once the final, processed images are ready, the processing threads store them into a display queue that the display thread will grab from to show the images. The processing threads also packages the frame and keypoints information into a struct object which is then stored in a “network queue”. The “network thread” reads from this queue and sends out data over a UDP socket for downstream applications.
 
+![Overview](/docs/openEyeTrack_Overiew.png)
 
+ *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*
+ 
 ### Performance 
 
 
 Under the conditions at the time of development, frame acquisition frame rates of up to 715 fps and display rates of up to 145 fps were available. Although more threads in theory should speed up the processing, four processing threads were sufficient to keep up with the camera. We found that performance improved when we used the gev_nettweak tool provided by Teledyne Dalsa, which adjusts various features for the network buffers allowing higher throughput transmission from the camera to the computer. Additionally, the environmental lighting significantly affects the speed at which the blob detection occurs. The opencv blob detector by default looks for black blobs and thus more light allows for easier detection by increasing the contrast between darker and lighter areas of the image.To facilitate the detection process, the images undergo a binary thresholding and the user can specify a region of interest for the blob detector to focus on. For eye tracking, it is necessary to have an infrared IR light source to increase the contrast between the pupil and the surrounding regions.. 
 
- ![Overview](/docs/openEyeTrack_Overiew.png)
- 
- *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*
 ### Limitations
 
  Our eye tracking solution is not meant to solve all gaze tracking issues which may be more readily available in commercial solutions. 

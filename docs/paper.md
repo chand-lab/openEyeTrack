@@ -1,3 +1,17 @@
+---
+title: 'openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications'
+authors:
+ - name: Jorge (Paolo) Casas
+ - name: Chandramouli Chandrasekaran
+affiliations:
+ - name: Department of Biomedical Engineering, Boston University, 02215
+ - name: Department of Anatomy and Neurobiology, Boston University, 02118
+ - name: Department of Psychological and Brain Sciences, Boston University, 02215
+date: 11 July 2019
+bibliography: paper.bib
+---
+
+
 ## openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications
 
 **Jorge (Paolo) Casas and Chandramouli Chandrasekaran** <br>
@@ -12,12 +26,12 @@ When faced with a decision, an organism uses information gathered by their sense
 
 ### Software and Hardware components 
 
-_openEyeTrack_ takes advantage of OpenCV, a low cost high speed infrared camera and Gige-V APIs for Linux provided by Teledyne Dalsa, and the graphical user interface toolkit QT5, all of which can be downloaded for free. The only costs are from the hardware components such as the camera (Genie Nano M640 NIR, Teledyne Dalsa, ~$450, ~730 frames per second) and infrared light source, an articulated arm to position the camera (Manfrotto: $130), a computer with one or more gigabit network interface cards, and a power over ethernet switch to power and receive data from the camera. By using the Gige-V Framework to capture the frames from the DALSA camera and the OpenCV simple blob detector, “openEyeTrack” is able to accurately calculate the position and area of the pupil. Pupil size has been linked to arousal levels and can offer insight to the emotions of the subject. Video based eye trackers can perform nearly as well as classical scleral search coil based methods and can be used for most applications. 
+_openEyeTrack_ takes advantage of OpenCV [@opencv_library], a low cost high speed infrared camera and Gige-V APIs for Linux provided by Teledyne Dalsa [@GigeV], and the graphical user interface toolkit QT5 [@qt5], all of which can be downloaded for free. The only costs are from the hardware components such as the camera (Genie Nano M640 NIR, Teledyne Dalsa, ~$450, ~730 frames per second) and infrared light source, an articulated arm to position the camera (Manfrotto: $130), a computer with one or more gigabit network interface cards, and a power over ethernet switch to power and receive data from the camera. By using the Gige-V Framework to capture the frames from the DALSA camera and the OpenCV simple blob detector, “openEyeTrack” is able to accurately calculate the position and area of the pupil. Pupil size has been linked to arousal levels and can offer insight to the emotions of the subject. Video based eye trackers can perform nearly as well as classical scleral search coil based methods and can be used for most applications [@10.3389/fnbeh.2012.00049]. 
 
 
 ### Multithreading provides improvements over existing open source solutions
 
-openEyeTrack is based on other open-source eye trackers currently available such as “Oculomatic” (). However, most of these programs are single threaded: the frames are captured, processed, and displayed sequentially, only executing the next stage once the previous stage has been completed. Although single threaded  methods have become more effective over the years, these stages are time consuming and can limit the overall performance. In order to increase performance “openEyeTrack” was developed as a multithreaded application. The capture, display, data transmission, and most importantly, processing components all happen within their own separate threads. By incorporating multiple threads, the processing speed of the frames is able to match the frame capture rate of the camera, allowing for lossless processing of data.
+openEyeTrack is based on other open-source eye trackers currently available such as “Oculomatic” [@ZIMMERMANN2016138]. However, most of these programs are single threaded: the frames are captured, processed, and displayed sequentially, only executing the next stage once the previous stage has been completed. Although single threaded  methods have become more effective over the years, these stages are time consuming and can limit the overall performance. In order to increase performance “openEyeTrack” was developed as a multithreaded application. The capture, display, data transmission, and most importantly, processing components all happen within their own separate threads. By incorporating multiple threads, the processing speed of the frames is able to match the frame capture rate of the camera, allowing for lossless processing of data.
 
 
 ### Algorithm

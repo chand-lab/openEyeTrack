@@ -6,10 +6,10 @@ tags:
  - Multi-Threading
  - OpenCV
  - Teledyne DALSA
-author:
+authors:
  - Jorge (Paolo) Casas
  - Chandramouli Chandrasekaran
- affiliations:
+affiliation:
  - name: Department of Biomedical Engineering, Boston University, 02215
  - name: Department of Anatomy and Neurobiology, Boston University, 02118
  - name: Department of Psychological and Brain Sciences, Boston University, 02215

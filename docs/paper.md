@@ -1,6 +1,6 @@
 ## openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications
 
-*Jorge (Paolo) Casas and Chandramouli Chandrasekaran* <br>
+**Jorge (Paolo) Casas and Chandramouli Chandrasekaran** <br>
 Department of Biomedical Engineering, Boston University, 02215  <br>
 Department of Anatomy and Neurobiology, Boston University, 02118 <br>
 Department of Psychological and Brain Sciences, Boston University, 02215
@@ -30,7 +30,9 @@ As depicted in **Figure 1** below, as frames transition between the captured, pr
 
 Under the conditions at the time of development, frame acquisition frame rates of up to 715 fps and display rates of up to 145 fps were available. Although more threads in theory should speed up the processing, four processing threads were sufficient to keep up with the camera. We found that performance improved when we used the gev_nettweak tool provided by Teledyne Dalsa, which adjusts various features for the network buffers allowing higher throughput transmission from the camera to the computer. Additionally, the environmental lighting significantly affects the speed at which the blob detection occurs. The opencv blob detector by default looks for black blobs and thus more light allows for easier detection by increasing the contrast between darker and lighter areas of the image.To facilitate the detection process, the images undergo a binary thresholding and the user can specify a region of interest for the blob detector to focus on. For eye tracking, it is necessary to have an infrared IR light source to increase the contrast between the pupil and the surrounding regions.. 
 
-
+ ![Overview](/docs/openEyeTrack_Overiew.png)
+ 
+ *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*
 ### Limitations
 
  Our eye tracking solution is not meant to solve all gaze tracking issues which may be more readily available in commercial solutions. 

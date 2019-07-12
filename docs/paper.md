@@ -9,7 +9,7 @@ tag:
 author:
  - Jorge (Paolo) Casas
  - Chandramouli Chandrasekaran
-affiliation:
+affiliations:
  - name: Department of Biomedical Engineering, Boston University, 02215
  - name: Department of Anatomy and Neurobiology, Boston University, 02118
  - name: Department of Psychological and Brain Sciences, Boston University, 02215

@@ -17,11 +17,10 @@ date: 11 July 2019
 bibliography: paper.bib
 ---
 
-<p align="center">
-  Department of Biomedical Engineering, Boston University, 02215 | 
-  Department of Anatomy and Neurobiology, Boston University, 02118 |
-  Department of Psychological and Brain Sciences, Boston University, 02215
-</p>
+Department of Biomedical Engineering, Boston University, 02215 | 
+Department of Anatomy and Neurobiology, Boston University, 02118 |
+Department of Psychological and Brain Sciences, Boston University, 02215
+
 
 ### Statement of Need
 

@@ -1,12 +1,12 @@
 ---
 title: 'openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications'
-tags:
+tag:
  - C++
  - Eye-Tracking
  - Multi-Threading
  - OpenCV
  - Teledyne DALSA
-authors:
+author:
  - Jorge (Paolo) Casas
  - Chandramouli Chandrasekaran
 affiliation:

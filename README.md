@@ -15,8 +15,9 @@
 ## Installation
 
  - Install git by typing: $ sudo apt-get install git-core
- - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or clone the repository and the installation script denoted as *software_install* within the repository
-   - if you choose to run the installation script you must first convert it to an executable by typing: $ chmod +x software_install.sh
+ - Clone repository by typing: $ git clone https://github.com/mailchand/openEyeTrack.git
+ - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *software_install* within the repository
+   - if you choose to run the installation script you may need to first convert it to an executable by typing: $ chmod +x software_install.sh
 
 ### Installing GigE-V Framework
 - Go to Teledyne dalsa website and download the GigE-V Framework for Linux under support → downloads → SDKs

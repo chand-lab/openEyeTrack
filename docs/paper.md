@@ -23,7 +23,7 @@ bibliography: paper.bib
 
 ### Statement of Need
 
-When faced with a decision, an organism uses information gathered by their senses in order to determine the best course of action. Vision is one of the primary senses and tracking eye gaze can offer insight into the cues that affect decision making behavior. Thus, to study decision-making and other cognitive processes it is fundamentally necessary to accurately track eye position. However, they  are often very expensive and incorporate their own proprietary software to detect the movement of the eye, which limits the researcher’s ability to be fully informed regarding the ongoing processes within their experiment and incorporate modifications tailored to their needs. Here, we present our software solution, “_openEyeTrack_”, a low cost, high speed, low latency, open-source video-based eye tracker. 
+When faced with a decision, an organism uses information gathered by their senses in order to determine the best course of action. Vision is one of the primary senses and tracking eye gaze can offer insight into the cues that affect decision making behavior. Thus, to study decision-making and other cognitive processes it is fundamentally necessary to accurately track eye position. However, they  are often very expensive and incorporate their own proprietary software to detect the movement of the eye, which limits the researcher’s ability to be fully informed regarding the ongoing processes within their experiment and incorporate modifications tailored to their needs. Here, we present our software solution, “_openEyeTrack_”, a low cost, high speed, low latency, open-source video-based eye tracker [@openEyeTrack]. 
 
 
 ### Software and Hardware components 

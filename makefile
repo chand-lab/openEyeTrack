@@ -26,9 +26,8 @@ OPENCV = $(shell pkg-config opencv4 --cflags --libs)
 #
 
 #this line needs to be changed based on user download location
-#if the GigeV framework is installed as direct in the user guide then only 
-#the second parameter (account name) needs to be changed
-include /home/jpcasas/DALSA/GigeV/examples/common/commondefs.mk
+#no need to change if installed as described in user guide
+include ~/DALSA/GigeV/examples/common/commondefs.mk
 
 CXX_COMPILE_OPTIONS = -c $(OPENCV) $(DEBUGFLAGS) -DPOSIX_HOSTPC -D_REENTRANT -ffor-scope \
 			-Wall -Wno-parentheses -Wno-missing-braces -Wno-unused-but-set-variable \

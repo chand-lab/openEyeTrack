@@ -16,10 +16,11 @@ affiliations:
 date: 11 July 2019
 bibliography: paper.bib
 ---
+
 <p align="center">
   Department of Biomedical Engineering, Boston University, 02215 | 
-  <a href="#">Department of Anatomy and Neurobiology, Boston University, 02118</a> |
-  <a href="#">Department of Psychological and Brain Sciences, Boston University, 02215</a>
+  Department of Anatomy and Neurobiology, Boston University, 02118 |
+  Department of Psychological and Brain Sciences, Boston University, 02215
 </p>
 
 ### Statement of Need
@@ -62,5 +63,7 @@ _openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEy
  
 -![Fidgit deposited in figshare.](openEyeTrack_Overview.png)
 *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.* 
+
+
 
 ### References

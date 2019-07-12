@@ -1,8 +1,8 @@
 ---
 title: 'openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications'
-authors:
- - name: Jorge (Paolo) Casas
- - name: Chandramouli Chandrasekaran
+author:
+ - Jorge (Paolo) Casas
+ - Chandramouli Chandrasekaran
 affiliations:
  - name: Department of Biomedical Engineering, Boston University, 02215
  - name: Department of Anatomy and Neurobiology, Boston University, 02118
@@ -11,10 +11,6 @@ date: 11 July 2019
 bibliography: paper.bib
 ---
 
-
-## openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications
-
-**Jorge (Paolo) Casas and Chandramouli Chandrasekaran** <br>
 Department of Biomedical Engineering, Boston University, 02215  <br>
 Department of Anatomy and Neurobiology, Boston University, 02118 <br>
 Department of Psychological and Brain Sciences, Boston University, 02215

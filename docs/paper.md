@@ -23,10 +23,6 @@ openEyeTrack is based on other open-source eye trackers currently available such
 ### Algorithm
 
 As depicted in **Figure 1** below, as frames transition between the captured, processed, and display processes, they are stored in queues which enable the different processes to run independently  and allow for asynchronous capture, detection, and display. Once the camera grabs a new frame, it is very briefly stored in the Genicam memory buffers before being extracted and packaged by the “capture thread” into a struct and stores in a queue. This approach allows for the sequence of acquisition frames to be preserved and the frame acquisition process to take place without being slowed down by processing or displaying. The frames in the “capture queue” are popped off by the “n” (user specified) processing thread(s). Each processing thread takes the data from the “capture queue,” converts it into an OpenCV Mat object, applies the OpenCV blob detection algorithm, notes the key features, and outputs the position of the blob as text on the frame and  draws a circle around the blob. This process is very time consuming, which is why initializing multiple threads are recommended for higher performance. Once the final, processed images are ready, the processing threads store them into a display queue that the display thread will grab from to show the images. The processing threads also packages the frame and keypoints information into a struct object which is then stored in a “network queue”. The “network thread” reads from this queue and sends out data over a UDP socket for downstream applications.
-
-![Overview](/docs/openEyeTrack_Overiew.png)
-
- *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*
  
 ### Performance 
 
@@ -43,3 +39,7 @@ Under the conditions at the time of development, frame acquisition frame rates o
 3. Third, using openEyeTrack requires knowledge of Linux and some degree of comfort with the command line to compile and install various components and thus it is not as seamless and polished as commercial solutions. On the other hand it provides open source code for eye-tracking.
 
 _openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEyeTrack](https://github.com/mailchand/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boson University.
+
+![Overview](/docs/openEyeTrack_Overview.png)
+
+ *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*

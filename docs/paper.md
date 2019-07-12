@@ -17,8 +17,8 @@ date: 11 July 2019
 bibliography: paper.bib
 ---
 
-Department of Biomedical Engineering, Boston University, 02215 </br>
-Department of Anatomy and Neurobiology, Boston University, 02118 </br>
+Department of Biomedical Engineering, Boston University, 02215 <br/>
+Department of Anatomy and Neurobiology, Boston University, 02118 <br/>
 Department of Psychological and Brain Sciences, Boston University, 02215 
 
 

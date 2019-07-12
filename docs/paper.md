@@ -20,9 +20,9 @@ bibliography: paper.bib
 </p>
 
 <p align="center">
-  Department of Biomedical Engineering, Boston University, 02215 </br>
-  Department of Anatomy and Neurobiology, Boston University, 02118 </br>
-  Department of Psychological and Brain Sciences, Boston University, 02215 </br<
+  Department of Biomedical Engineering, Boston University, 02215 <BR>
+  Department of Anatomy and Neurobiology, Boston University, 02118 <BR>
+  Department of Psychological and Brain Sciences, Boston University, 02215
 </p>
 
 

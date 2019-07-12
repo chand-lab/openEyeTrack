@@ -30,6 +30,9 @@ sudo apt -y install x264 v4l-utils
 sudo apt -y install libprotobuf-dev protobuf-compiler
 sudo apt -y install libgoogle-glog-dev libgflags-dev
 sudo apt -y install libgphoto2-dev libeigen3-dev libhdf5-dev doxygen
+cd ~
+mkdir installation
+cd installation
 git clone https://github.com/opencv/opencv.git
 cd opencv
 git checkout 4.1.0

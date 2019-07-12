@@ -10,9 +10,12 @@
 - OpenCV 4.1.0
 - Qt 5.5.1
 - GigE-V Framework for Linux
+- Git
 
 ## Installation
- - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *software_install* within the repository
+    sudo apt-get git-core
+
+ - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or clone the repository and the installation script denoted as *software_install* within the repository
    - if you choose to run the installation script you must first convert it to an executable by typing: $ chmod +x software_install.sh
 
 ### Installing GigE-V Framework

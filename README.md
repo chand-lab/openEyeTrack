@@ -12,6 +12,7 @@
 - GigE-V Framework for Linux
 
 ## Installation
+ - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *software_install* within the repository
 
 ### Installing GigE-V Framework
 - Go to Teledyne dalsa website and download the GigE-V Framework for Linux under support → downloads → SDKs
@@ -21,7 +22,7 @@
 - Cd into DALSA and type $ ./corinstall
 - Go to connection settings and edit the ethernet connection that is associated with the camera
 - Go to the IPv4 settings and change the method to “Link-Local Only” and save changes
-- Make sure the connection is enabled and verify you can connect to camera by typing     $ GigeDeviceStatus from terminal
+- Make sure the connection is enabled and verify you can connect to camera by going to terminal and typing:$ GigeDeviceStatus 
 - Try running the genicam_cpp_demo found under DALSA/GigeV/examples
 - ***run the gev_nettweak tool (found under GigeV/bin) to enhance performance and prevent resetting the image transfer.***
 This tool needs to be re-run if the system restarts
@@ -31,8 +32,6 @@ This tool needs to be re-run if the system restarts
     sudo apt-get install qt5-default
 
 ### Installing opencv (version 4.1.0)
-https://www.learnopencv.com/install-opencv-3-4-4-on-ubuntu-16-04/
-
 Navigate to the directory where you want to clone the repository
 Type:
 

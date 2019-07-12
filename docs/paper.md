@@ -59,7 +59,7 @@ _openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEy
 
 ![overview](openEyeTrack_Overview.png)
 
- *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*
+ *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.* </br>
  
  
  ### References

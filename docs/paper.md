@@ -54,5 +54,5 @@ Under the conditions at the time of development, frame acquisition frame rates o
 
 _openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEyeTrack](https://github.com/mailchand/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boson University.
 
-
+-![overview](openEyeTrack_Overview.png)
  *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.*

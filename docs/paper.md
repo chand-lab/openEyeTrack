@@ -54,4 +54,8 @@ _openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEy
 -![Fidgit deposited in figshare.](openEyeTrack_Overview.png)
 *Figure 1: A visual depiction of the overall software and hardware architecture in openEyeTrack.* 
 
+### Acknowledgements
+
+I would like to acknowledge Jeremy Casas for his invaluable feedback and support throughout this project.
+
 ### References

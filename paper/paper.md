@@ -8,7 +8,7 @@ tags:
  - Teledyne DALSA
 authors:
   - name: Jorge (Paolo) Casas
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0002-9575-1717
     affiliation: 1
   - name: Chandramouli Chandrasekaran
     orcid: 0000-0002-1711-590X

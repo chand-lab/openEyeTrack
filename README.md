@@ -13,6 +13,8 @@
 - Git
 - [cvui framework](https://github.com/Dovyski/cvui)
 
+We have had problems with 18.04 and recommend an install on the 16.04 system. We do not support Windows at the moment.  
+
 ## Installation
 
  - Install git by typing: $ sudo apt-get install git-core

@@ -47,7 +47,7 @@ Type:
     sudo apt -y remove x264 libx264-dev
 
 Install dependencies
-
+```
     sudo apt -y install build-essential checkinstall cmake pkg-config yasm
     sudo apt -y install git gfortran
     sudo apt -y install libjpeg8-dev libjasper-dev libpng12-dev
@@ -63,7 +63,7 @@ Install dependencies
     sudo apt -y install libopencore-amrnb-dev libopencore-amrwb-dev
     sudo apt -y install libavresample-dev
     sudo apt -y install x264 v4l-utils
-    
+``` 
 Optional dependencies
 
     sudo apt -y install libprotobuf-dev protobuf-compiler

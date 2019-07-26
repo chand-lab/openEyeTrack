@@ -1,6 +1,6 @@
 ---
 title: 'openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications'
-tag:
+tags:
  - C++
  - Eye-Tracking
  - Threading

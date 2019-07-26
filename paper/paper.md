@@ -48,7 +48,7 @@ Our eye tracking solution is not meant to solve all gaze tracking issues which m
 
 3. Third, using _openEyeTrack_ requires knowledge of Linux and some degree of comfort with the command line to compile and install various components and thus it is not as seamless and polished as commercial solutions. On the other hand it provides open source code for eye-tracking.
 
-_openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEyeTrack](https://github.com/mailchand/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boston University, and in other labs performing human psychophysics experiments at Boston University. We also anticipate using it in the Zimmerman Lab at the University of Minnesota.
+_openEyeTrack_ is available on GitHub under [https://github.com/chand-lab/openEyeTrack](https://github.com/chand-lab/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boston University, and in other labs performing human psychophysics experiments at Boston University. We also anticipate using it in the Zimmerman Lab at the University of Minnesota.
 
 
 -![Fidgit deposited in figshare.](openEyeTrack_Overview.png)

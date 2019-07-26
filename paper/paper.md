@@ -1,6 +1,6 @@
 ---
 title: 'openEyeTrack - A high speed multi-threaded eye tracker for head-fixed applications'
-tag:
+tags:
  - C++
  - Eye-Tracking
  - Threading
@@ -20,7 +20,7 @@ affiliations:
    index: 2
  - name: Department of Psychological and Brain Sciences, Boston University, Boston, MA 02215, USA
    index: 3
-date: 11 July 2019
+date: 26 July 2019
 bibliography: paper.bib
 ---
 

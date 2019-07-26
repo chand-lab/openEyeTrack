@@ -20,7 +20,7 @@
  - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *software_install* within the repository
    - If you choose to run the installation script you may need to first convert it to an executable by typing: $ chmod +x software_install.sh
    - Occassionally, you may be prompted to press "y" to continue the installation process
-   - Please explicitly run the last two commands at the bottom of this file concerning linking
+   - Please explicitly run the last two commands at the bottom of this file concerning linking of libraries and make sure Ubuntu actually identifies where your libraries are.
 
 ### Installing GigE-V Framework
 - Go to Teledyne dalsa website and download the GigE-V Framework for Linux under support → downloads → SDKs

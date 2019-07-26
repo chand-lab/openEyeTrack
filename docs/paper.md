@@ -17,7 +17,7 @@ bibliography: paper.bib
 
 ### Statement of Need
 
-When faced with a decision, an organism uses information gathered by their senses in order to determine the best course of action. Vision is one of the primary senses and tracking eye gaze can offer insight into the cues that affect decision making behavior. Thus, to study decision-making and other cognitive processes it is fundamentally necessary to accurately track eye position. However, commercial eye trackers are 1) often very expensive, and 2) incorporate their own proprietary software to detect the movement of the eye. Closed source solutions limits the researcher’s ability to be fully informed regarding the ongoing processes within their experiment and incorporate modifications tailored to their needs. Here, we present our software solution, _openEyeTrack_, a low cost, high speed, low latency, open-source video-based eye tracker [@openEyeTrack]. 
+When faced with a decision, an organism uses information gathered by their senses in order to determine the best course of action. Vision is one of the primary senses and tracking eye gaze can offer insight into the cues that affect decision making behavior. Thus, to study decision-making and other cognitive processes it is fundamentally necessary to accurately track eye position. However, commercial eye trackers are 1) often very expensive, and 2) incorporate their own proprietary software to detect the movement of the eye. Closed source solutions also limit the researcher’s ability to be fully informed regarding the ongoing processes within their experiment and incorporate modifications tailored to their needs. Here, we present our software solution, _openEyeTrack_, a low cost, high speed, low latency, open-source video-based eye tracker [@openEyeTrack]. 
 
 
 ### Software and Hardware components 
@@ -36,7 +36,7 @@ As depicted in **Figure 1** below, as frames transition between the captured, pr
  
 ### Performance 
 
-Under the conditions at the time of development, frame acquisition frame rates of up to 715 fps and display rates of up to 145 fps were achieved. Although more  threads in theory should increase speed, four processing threads were sufficient to keep up with the camera. Performance improved when we used the gev_nettweak tool provided by Teledyne Dalsa, which adjusts various features for the network buffers allowing higher throughput transmission from the camera to the computer. Additionally, the environmental lighting significantly affects the speed at which the blob detection occurs. The OpenCV blob detector by default looks for black blobs and thus more light allows for easier detection by increasing the contrast between darker and lighter areas of the image.To facilitate the detection process, the images undergo a binary thresholding and the user can specify a region of interest for the blob detector to focus on. For eye tracking, it is necessary to have an infrared IR light source to increase the contrast between the pupil and the surrounding regions.
+Under the conditions at the time of development, frame acquisition frame rates of up to 715 fps and display rates of up to 145 fps were achieved. Although more  threads in theory should increase speed, four processing threads were sufficient to keep up with the camera. Performance improved when we used the gev_nettweak tool provided by Teledyne Dalsa, which adjusts various features for the network buffers allowing higher throughput transmission from the camera to the computer. Additionally, the environmental lighting significantly affects the speed at which the blob detection occurs. The OpenCV blob detector by default looks for black blobs and thus more light allows for easier detection by increasing the contrast between darker and lighter areas of the image. To facilitate the detection process, the images undergo a binary thresholding and the user can specify a region of interest for the blob detector to focus on. For eye tracking, it is necessary to have an infrared IR light source to increase the contrast between the pupil and the surrounding regions.
 
 ### Limitations
 
@@ -48,7 +48,7 @@ Our eye tracking solution is not meant to solve all gaze tracking issues which m
 
 3. Third, using _openEyeTrack_ requires knowledge of Linux and some degree of comfort with the command line to compile and install various components and thus it is not as seamless and polished as commercial solutions. On the other hand it provides open source code for eye-tracking.
 
-_openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEyeTrack](https://github.com/mailchand/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boson University.
+_openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEyeTrack](https://github.com/mailchand/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boston University, and in other labs performing human psychophysics experiments at Boston University. We also anticipate using it in the Zimmerman Lab at the University of Minnesota.
 
 
 -![Fidgit deposited in figshare.](openEyeTrack_Overview.png)
@@ -56,6 +56,6 @@ _openEyeTrack_ is available on GitHub under [https://github.com/mailchand/openEy
 
 ### Acknowledgements
 
-I would like to acknowledge Jeremy Casas for his invaluable feedback and support throughout this project.
+We would like to acknowledge Jeremy Casas for his invaluable feedback and support throughout this project. This work was supported by an NIH/NINDS Grant to CC (4R00NS092972-03) and startup funds provided by Boston University to CC.
 
 ### References

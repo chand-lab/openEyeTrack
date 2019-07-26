@@ -2,14 +2,14 @@
 ## Tested Hardware Specs
 - Computer: Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz, 64GB
  - Basic IR light source
- - Camera: [Teledyne DALSA Genie Nano M640 NIR] (https://www.teledynedalsa.com/en/products/imaging/cameras/genie-nano-1gige/)
+ - Camera: [Teledyne DALSA Genie Nano M640 NIR](https://www.teledynedalsa.com/en/products/imaging/cameras/genie-nano-1gige/)
  - Netgear Power-Over-Ethernet Switch
 
 ## Software Specs
 - Ubuntu 16.04
 - OpenCV 4.1.0
 - Qt 5.5.1
-- GigE-V Framework for Linux
+- [GigE-V Framework for Linux](https://www.teledynedalsa.com/en/products/imaging/vision-software/linux-gige-v-framework/)
 - Git
 
 ## Installation

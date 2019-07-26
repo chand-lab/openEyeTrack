@@ -6,11 +6,20 @@ tag:
  - Threading
  - OpenCV
  - Teledyne DALSA
-author:
-- name: Jorge (Paolo) Casas
-  affiliation: Department of Biomedical Engineering, Boston University, 02215 
-- name: Chandramouli Chandrasekaran
-  affiliation: Department of Anatomy and Neurobiology, Boston University, 02118 \ Department of Psychological and Brain Sciences, Boston University, 02215
+authors:
+  - name: Jorge (Paolo) Casas
+    orcid: 
+    affiliation: 1
+  - name: Chandramouli Chandrasekaran
+    orcid: 
+    affiliation: "2, 3"
+affiliations:
+ - name: Department of Biomedical Engineering, Boston University, Boston, MA 02215, USA
+   index: 1
+ - name: Department of Anatomy and Neurobiology, Boston University, Boston, MA 02118, USA
+   index: 2
+ - name: Department of Psychological and Brain Sciences, Boston University, Boston, MA 02215, USA
+   index: 3
 date: 11 July 2019
 bibliography: paper.bib
 ---
@@ -22,7 +31,7 @@ When faced with a decision, an organism uses information gathered by their sense
 
 ### Software and Hardware components 
 
-_openEyeTrack_ takes advantage of OpenCV [@opencv_library], a low cost high speed infrared camera and Gige-V APIs for Linux provided by Teledyne DALSA [@GigeV], and the graphical user interface toolkit QT5 [@qt5] and the opencv based gui elements[@cvui], all of which can be downloaded for free. The only costs are from the hardware components such as the camera (Genie Nano M640 NIR, Teledyne DALSA, ~$450, ~730 frames per second) and infrared light source, an articulated arm to position the camera (Manfrotto: $130), a computer with one or more gigabit network interface cards, and a power over ethernet switch to power and receive data from the camera. By using the Gige-V Framework to capture the frames from the DALSA camera and the OpenCV simple blob detector, _openEyeTrack_ is able to accurately calculate the position and area of the pupil. Pupil size has been linked to arousal levels and can offer insight to the emotions of the subject [@doi:10.1111/j.1469-8986.2007.00606.x]. Video based eye trackers can perform nearly as well as classical scleral search coil based methods and can be used for most applications [@10.3389/fnbeh.2012.00049]. 
+_openEyeTrack_ takes advantage of OpenCV [@opencv_library], a low cost high speed infrared camera and Gige-V APIs for Linux provided by Teledyne DALSA [@GigeV], and the graphical user interface toolkit QT5 [@qt5] and the opencv based gui elements [@cvui], all of which can be downloaded for free. The only costs are from the hardware components such as the camera (Genie Nano M640 NIR, Teledyne DALSA, ~$450, ~730 frames per second) and infrared light source, an articulated arm to position the camera (Manfrotto: $130), a computer with one or more gigabit network interface cards, and a power over ethernet switch to power and receive data from the camera. By using the Gige-V Framework to capture the frames from the DALSA camera and the OpenCV simple blob detector, _openEyeTrack_ is able to accurately calculate the position and area of the pupil. Pupil size has been linked to arousal levels and can offer insight to the emotions of the subject [@doi:10.1111/j.1469-8986.2007.00606.x]. Video based eye trackers can perform nearly as well as classical scleral search coil based methods and can be used for most applications [@10.3389/fnbeh.2012.00049]. 
 
 
 ### Multithreading provides improvements over existing open source solutions
@@ -48,7 +57,7 @@ Our eye tracking solution is not meant to solve all gaze tracking issues which m
 
 3. Third, using _openEyeTrack_ requires knowledge of Linux and some degree of comfort with the command line to compile and install various components and thus it is not as seamless and polished as commercial solutions. On the other hand it provides open source code for eye-tracking.
 
-_openEyeTrack_ is available on GitHub under [https://github.com/chand-lab/openEyeTrack](https://github.com/chand-lab/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boston University, and in other labs performing human psychophysics experiments at Boston University. We also anticipate using it in the Zimmerman Lab at the University of Minnesota.
+_openEyeTrack_ is available on GitHub at [https://github.com/chand-lab/openEyeTrack](https://github.com/chand-lab/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. Currently, there are plans to incorporate _openEyeTrack_ in research concerning the nueral dynamics of cognition, decision-making, and motor-control conducted at the Chand Lab at Boston University, and in other labs performing human psychophysics experiments at Boston University. We also anticipate using it in the Zimmerman Lab at the University of Minnesota.
 
 
 -![Fidgit deposited in figshare.](openEyeTrack_Overview.png)

@@ -2,6 +2,7 @@
 ## Tested Hardware Specs
 - Computer: Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz, 64GB
  - Basic IR light source
+     - We use the one from Amazon [IR illuminator](https://www.amazon.com/gp/product/B07Q86153D/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
  - Camera: [Teledyne DALSA Genie Nano M640 NIR](https://www.teledynedalsa.com/en/products/imaging/cameras/genie-nano-1gige/)
  - Netgear Power-Over-Ethernet Switch
 
@@ -19,7 +20,7 @@ We have had problems with 18.04 and recommend an install on the 16.04 system. We
 
  - Install git by typing: $ sudo apt-get install git-core
  - Clone repository by typing: $ git clone https://github.com/mailchand/openEyeTrack.git
- - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *software_install* within the repository
+ - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *softwareInstall* within the repository
    - If you choose to run the installation script you may need to first convert it to an executable by typing: $ chmod +x software_install.sh
    - Occassionally, you may be prompted to press "y" to continue the installation process
    - Please explicitly run the last two commands at the bottom of this file concerning linking of libraries and make sure Ubuntu actually identifies where your libraries are.
@@ -34,6 +35,7 @@ We have had problems with 18.04 and recommend an install on the 16.04 system. We
 - Go to the IPv4 settings and change the method to “Link-Local Only” and save changes
 - Make sure the connection is enabled and verify you can connect to camera by going to terminal and typing:$ GigeDeviceStatus 
 - Try running the genicam_cpp_demo found under DALSA/GigeV/examples
+  - Running the demo 
 - ***run the gev_nettweak tool (found under GigeV/bin) to enhance performance and prevent resetting the image transfer.***
 This tool needs to be re-run if the system restarts
 

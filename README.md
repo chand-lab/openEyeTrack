@@ -11,6 +11,7 @@
 - Qt 5.5.1
 - [GigE-V Framework for Linux](https://www.teledynedalsa.com/en/products/imaging/vision-software/linux-gige-v-framework/)
 - Git
+- [cvui framework](https://github.com/Dovyski/cvui)
 
 ## Installation
 

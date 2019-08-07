@@ -1,4 +1,14 @@
 # openEyeTrack
+
+## Statement of Need
+When faced with a decision, an organism uses information gathered by its senses in order to determine the best course of action. Vision is one of the primary senses and tracking eye gaze can offer insight into the cues that affect decision making behavior. Thus, to study decision-making and other cognitive processes it is fundamentally necessary to accurately track eye position. However, commercial eye trackers are 1) often very expensive, and 2) incorporate their own proprietary software to detect the movement of the eye. Closed source solutions also limit the researcher’s ability to be fully informed regarding the ongoing processes within their experiment and incorporate modifications tailored to their needs. Here, we present our software solution, openEyeTrack, a low cost, high speed, low latency, open-source video-based eye tracker [@openEyeTrack]. Video based eye trackers can perform nearly as well as classical scleral search coil based methods and can be used for most applications [@10.3389/fnbeh.2012.00049].
+
+## Software and Hardware components
+openEyeTrack is a video based eye tracker that takes advantage of OpenCV [@opencv_library], a low cost high speed infrared camera and Gige-V APIs for Linux provided by Teledyne DALSA [@GigeV], the graphical user interface toolkit QT5 [@qt5] and the opencv based gui elements [@cvui], all of which can be downloaded for free. The only costs are from the hardware components such as the camera (Genie Nano M640 NIR, Teledyne DALSA, ~$450, ~730 frames per second) and infrared light source, an articulated arm to position the camera (Manfrotto: $130), a computer with one or more gigabit network interface cards, and a power over ethernet switch to power and receive data from the camera.
+
+By using the Gige-V Framework to capture the frames from the DALSA camera and the OpenCV simple blob detector, openEyeTrack is able to accurately calculate the position and area of the pupil. We include pupil size calculations because of its putative link to arousal levels and emotions of the observer [@doi:10.1111/j.1469-8986.2007.00606.x].
+
+
 ## Tested Hardware Specs
 - Computer: Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz, 64GB
  - Basic IR light source

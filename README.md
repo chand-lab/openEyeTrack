@@ -15,6 +15,8 @@ By using the Gige-V Framework to capture the frames from the DALSA camera and th
      - We use this one from Amazon [IR illuminator](https://www.amazon.com/gp/product/B07Q86153D/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
  - Camera: [Teledyne DALSA Genie Nano M640 NIR](https://www.teledynedalsa.com/en/products/imaging/cameras/genie-nano-1gige/)
  - Netgear Power-Over-Ethernet Switch
+ 
+ Update - We have now tested the openEyeTrack implementation on an INTEL NUC i7 as well as a Zotac EN51050. The eye tracker can perform with these configurations as well. The gev_nettweak tool needs to be run to get consistent performance. The network card is otherwise overloaded and frames are lost. A 725 Hz camera at 672x512 is transmitting ~249 megabytes per second. The net tweak tool changes the size of the buffers allowing jumbo frames to be transmitted over the network. 
 
 ## Software Specs
 - Ubuntu 16.04

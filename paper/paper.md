@@ -57,13 +57,13 @@ Under the conditions at the time of development, we were able to achieve frame a
 
 Our eye tracking solution is not meant to solve all gaze tracking issues which may be more readily available in commercial solutions. 
 
-1. Our eye tracker cannot be used if the head is freely moving. In our approach, which only detects the pupil, head motion is confounded with pupil motion. One future solution is to use both the corneal reflection and the pupil to allow for head-free eye tracking. This will be implemented in future versions of _openEyeTrack_.
+1. _openEyeTrack_ cannot be used if the head is freely moving. In our approach, which only detects the pupil, head motion is confounded with pupil motion. One future solution is to use both the corneal reflection and the pupil to allow for head-free eye tracking. We anticipate implementing corneal reflections in future versions of _openEyeTrack_.
 
 2. _openEyeTrack_ does not output signals to analog channels which is a typical feature of commercial eye trackers. These analog signals were proxies for the analog signals from scleral search coils used for eye tracking. 
 
-3. Using _openEyeTrack_ requires knowledge of Linux and some degree of comfort with the command line to compile and install various components and thus it is not as seamless and polished as commercial solutions. On the other hand it provides open source code for eye-tracking.
+3. Using _openEyeTrack_ requires knowledge of Linux and some degree of comfort with the command line to compile and install various components --- it is not as seamless and polished as commercial solutions. On the other hand, it provides open-source code for eye-tracking.
 
-_openEyeTrack_ is available on GitHub at [https://github.com/chand-lab/openEyeTrack](https://github.com/chand-lab/openEyeTrack) and a more detailed description of usage can be found under the README.md file located in the repository. 
+_openEyeTrack_ is available on GitHub at [https://github.com/chand-lab/openEyeTrack](https://github.com/chand-lab/openEyeTrack). A more detailed description of usage can be found under the README.md and USAGE.md files located in the repository. 
 
 
 -![Fidgit deposited in figshare.](openEyeTrack_Overview(1).png)

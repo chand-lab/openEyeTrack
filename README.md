@@ -16,7 +16,7 @@ By using the GigE-V Framework to capture the frames from the DALSA camera and th
  - Camera: [Teledyne DALSA Genie Nano M640 NIR](https://www.teledynedalsa.com/en/products/imaging/cameras/genie-nano-1gige/)
  - Netgear Power-Over-Ethernet Switch
  
- Update - We have now tested the openEyeTrack implementation on an INTEL NUC i7 as well as a Zotac EN51050. The eye tracker can perform with these configurations as well. The gev_nettweak tool needs to be run to get consistent performance. The network card is otherwise overloaded and frames are lost. A 725 Hz camera at 672x512 is transmitting ~249 megabytes per second. The net tweak tool changes the size of the buffers allowing jumbo frames to be transmitted over the network. 
+Update - We have now tested the openEyeTrack implementation on an INTEL NUC i7 as well as a Zotac EN51050. The eye tracker can perform with these configurations as well. The gev_nettweak tool needs to be run to get consistent performance. The network card is otherwise overloaded and frames are lost. A 725 Hz camera at 672x512 is transmitting ~249 megabytes per second. The net tweak tool changes the size of the buffers allowing jumbo frames to be transmitted over the network. 
 
 ## Software Specs
 - Ubuntu 16.04
@@ -26,7 +26,7 @@ By using the GigE-V Framework to capture the frames from the DALSA camera and th
 - Git
 - [cvui framework](https://github.com/Dovyski/cvui)
 
-We have had problems with 18.04 and recommend an install on the 16.04 system. We do not support Windows at the moment.  
+_We have had problems with 18.04 and recommend an install on the 16.04 system. We do not support Windows at the moment._
 
 ## Installation
 

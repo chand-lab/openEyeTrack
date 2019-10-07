@@ -26,7 +26,10 @@ Update - We have now tested the openEyeTrack implementation on an INTEL NUC i7 a
 - Git
 - [cvui framework](https://github.com/Dovyski/cvui)
 
-_We have had problems with 18.04 and recommend an install on the 16.04 system. We do not support Windows at the moment._
+Update 10/07/2019 : _We have tested openEyeTrack on clean installs of 18.04, and 19.04. We do not support Windows at the moment. If possible, we recommend using a clean system for openEyeTrack._ 
+
+Update 10/07/2019 : The exact Qt version is not an issue. We find the default Qt installed with qt5-default in the install script works perfectly fine with openEyeTrack.
+
 
 ## Installation
 

@@ -30,6 +30,9 @@ Update 10/07/2019 : _We have tested openEyeTrack on clean installs of 18.04, and
 
 Update 10/07/2019 : The exact Qt version is not an issue. We find the default Qt installed with qt5-default in the install script works perfectly fine with openEyeTrack.
 
+![ubuntu18](./images/ubuntu18.png)
+![ubuntu19](./images/ubuntu19.png)
+
 
 ## Installation
 

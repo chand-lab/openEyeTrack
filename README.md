@@ -138,5 +138,5 @@ Use:
 For detailed usage examples, see [USAGE.md](usage/USAGE.md) found under the docs folder
 
 
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3515534.svg)](https://doi.org/10.5281/zenodo.3515534)
 

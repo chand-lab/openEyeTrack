@@ -37,7 +37,7 @@ Update 10/07/2019 : The exact Qt version is not an issue. We find the default Qt
 ## Installation
 
  - Install git by typing: $ sudo apt-get install git-core
- - Clone repository by typing: $ git clone https://github.com/mailchand/openEyeTrack.git
+ - Clone repository by typing: $ git clone https://github.com/chand-lab/openEyeTrack.git
  - After installing the GigE-V Framework, you can either manually set up Qt and OpenCV or run the installation script denoted as *softwareInstall* within the repository
    - If you choose to run the installation script you may need to first convert it to an executable by typing: $ chmod +x softwareInstall.sh
    - Occassionally, you may be prompted to press "y" to continue the installation process

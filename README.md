@@ -1,5 +1,9 @@
 # openEyeTrack
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3515534.svg)](https://doi.org/10.5281/zenodo.3515534)
+
+The paper detailing our architecture is available at [![DOI](https://joss.theoj.org/papers/10.21105/joss.01631/status.svg)](https://doi.org/10.21105/joss.01631)
+
 ## Statement of Need
 When faced with a decision, an organism uses information gathered by its senses in order to determine the best course of action. Vision is one of the primary senses, and tracking eye gaze can offer insight into the cues that affect decision-making behavior. Thus, to study decision-making and other cognitive processes, it is fundamentally necessary to track eye position accurately. However, commercial eye trackers are 1) often very expensive, and 2) incorporate proprietary software to detect the movement of the eye. Closed source solutions limit the researcher’s ability to be fully informed regarding the algorithms used to track the eye and to incorporate modifications tailored to their needs. Here, we present our software solution, openEyeTrack, a low-cost, high-speed, low-latency, open-source video-based eye tracker. Video-based eye trackers can perform nearly as well as classical scleral search coil methods and are suitable for most applications.
 
@@ -137,6 +141,4 @@ Use:
 
 For detailed usage examples, see [USAGE.md](usage/USAGE.md) found under the docs folder
 
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3515534.svg)](https://doi.org/10.5281/zenodo.3515534)
 

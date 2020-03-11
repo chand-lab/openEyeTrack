@@ -142,3 +142,6 @@ Use:
 For detailed usage examples, see [USAGE.md](usage/USAGE.md) found under the docs folder
 
 
+# Usage notes for Genie Nano Cameras
+
+Apparently the default specs are set to be 30 Hz which would be suboptimal. We will update the actual specs used as soon as possible to enable high frame rate eye tracking. 

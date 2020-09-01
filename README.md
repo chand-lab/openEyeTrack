@@ -20,6 +20,8 @@ By using the GigE-V Framework to capture the frames from the DALSA camera and th
  - Camera: [Teledyne DALSA Genie Nano M640 NIR](https://www.teledynedalsa.com/en/products/imaging/cameras/genie-nano-1gige/)
  - Netgear Power-Over-Ethernet Switch
  
+Update 9/1/2020 - The camera firmware that was used can be found [here](https://github.com/chand-lab/openEyeTrack/blob/master/Camera%20Firmware/T_Nano-M640-NIR_Default_Default.ccf). You will need the windows saperea LT SDK to load it onto the camera and then set the camera to autoboot into this configuration.
+
 Update - We have now tested the openEyeTrack implementation on an INTEL NUC i7 as well as a Zotac EN51050. The eye tracker can perform with these configurations as well. The gev_nettweak tool needs to be run to get consistent performance. The network card is otherwise overloaded and frames are lost. A 725 Hz camera at 672x512 is transmitting ~249 megabytes per second. The net tweak tool changes the size of the buffers allowing jumbo frames to be transmitted over the network. 
 
 ## Software Specs

@@ -120,14 +120,14 @@ Clone opencv and opencv_contrib
     
  Use:
  ```
- cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local 
- -D WITH_TBB=ON 
- -D WITH_V4L=ON 
- -D WITH_QT=ON 
- -D WITH_OPENGL=ON 
- -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules 
- -D BUILD_EXAMPLES=OFF 
- -D OPENCV_GENERATE_PKGCONFIG=ON ..
+ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local \
+ -D WITH_TBB=ON \
+ -D WITH_V4L=ON \
+ -D WITH_QT=ON \
+ -D WITH_OPENGL=ON \
+ -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+ -D BUILD_EXAMPLES=OFF \
+ -D OPENCV_GENERATE_PKGCONFIG=ON .. \
 ```
 (For later versions of OpenCV, need to include OPENCV_GENERATE_PKGCONFIG=ON)
 
